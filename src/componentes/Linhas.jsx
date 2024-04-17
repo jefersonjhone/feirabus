@@ -10,8 +10,8 @@ import { MenuParadas } from "./PopUpPontos/MostrarParadas";
 const Linhas = ({props}) => {
     const [LinhasQueAtendem, setLinhasQueAtendem] = useState({})
     const [idlinha, MudarComponente] = props
-    
-    useEffect(()=>{getContent(url+`retornaLinhasQueAtendemParada/${idlinha}/1/Recebe`, setLinhasQueAtendem )},[idlinha])
+
+    useEffect(()=>{getContent(url+`linhas-que-atendem/${idlinha}`, setLinhasQueAtendem )},[idlinha])
     if (LinhasQueAtendem.sucesso){
     return (<>
         <div className=" bg-gray-100 rounded-md">
@@ -28,19 +28,19 @@ const Linhas = ({props}) => {
                                             src={'./Pesquisar por linha.png'}
                                             alt={"icone do onibus"}
                                             width={'40px'}/>
-                
+
                                     <p style={{margin: "0px"}} className='h-1 font-semibold' >
                                         {linha.num_linha}{"      "}{linha.cod_linha}
                                     </p>
-                
+
                                     </div>
-                
+
                                     <div className='w-3/4 bg-blue-200 flex flex-col justify-start '>
                                         <p style={{margin: "0px", marginTop:"4px", fontSize:"0.6rem"}}
                                             className='text-xs font-semibold text-gray-700 mx-auto'>
                                             {linha.descricao}
                                         </p>
-                
+
                                     </div>
                                 </div>
                             </div>

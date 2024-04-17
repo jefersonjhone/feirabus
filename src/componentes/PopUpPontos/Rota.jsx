@@ -21,12 +21,12 @@ export default function Rota({props}){
     useEffect( () => {
         var intervalo = setInterval(()=>{}, 10000)
         if (Object.keys(Rotas) < 1){
-            getContent(url+`V3/buscarItinerario/${numItinerario}/1/w/Recebe`, setRota)
+            getContent(url+`itinerarios/${numItinerario}`, setRota)
 
         }
         else if ( numVeicGestor && Veiculos.veiculos === undefined){
-            getContent(url+`V3/retornaVeiculosMapa/${numItinerario}/1/w/Recebe`, setVeiculos)
-            intervalo = setInterval( () =>{getContent(url+`V3/retornaVeiculosMapa/${numItinerario}/1/w/Recebe`, setVeiculos)}, 5000)
+            getContent(url+`veiculos-por-itinerario/${numItinerario}`, setVeiculos)
+            intervalo = setInterval( () =>{getContent(url+`veiculos-por-itinerario/${numItinerario}`, setVeiculos)}, 5000)
 
         }  return ()=> clearInterval(intervalo);}, [Rotas])
 

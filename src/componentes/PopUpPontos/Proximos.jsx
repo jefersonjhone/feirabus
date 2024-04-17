@@ -2,19 +2,28 @@ import { useEffect, useState } from "react"
 import getContent from "../../utils/getContent"
 import url from "../../utils/urls"
 import Rota from "./Rota"
-
+import RotasSimultaneas from "./RotasSimultaneas"
+import { MapContainer, TileLayer } from "react-leaflet"
 
 const Proximos = ({props}) => {
     const [ProximosOnibus, setProximosOnibus] = useState({})
     const [desc, MudarComponente, id, coord] = props
     useEffect(
         ()=>{
-            getContent(url +`V3/buscarPrevisoes/${id}/false/1/w/Recebe`, setProximosOnibus)
+            getContent(url +`previsoes/${id}`, setProximosOnibus)
         }, [id])
-    var v = ProximosOnibus.previsoes.map(o=>o.codItinerario);
-    console.log(v);
     if (ProximosOnibus.sucesso){
 
+        var v = {}
+        ProximosOnibus.previsoes.forEach(o=> {v[o.codItinerario]= 0});
+        console.log("itinerários em v", v);
+        const rotas = <>
+            <MapContainer center={coord} zoom={14} style={{ height: '60vh', width: '300px' }} >
+                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                <RotasSimultaneas props={[Object.keys(v)]}/>
+            </MapContainer>
+            </>
+            /*return <>{rotas}</>;*/
 
         return  (<><div  className='w-72 h-96 p-1 bg-gray-100 rounded-md overflow-y-scroll'>
                 <div className='text-sm text-center'>
@@ -23,7 +32,7 @@ const Proximos = ({props}) => {
                 { Object.keys(ProximosOnibus.previsoes).length > 0 && ProximosOnibus.previsoes.map(
                     (o)=>{
                         return <div key={`${o.codItinerario} ${o.apelidoLinha} ${o.prev}`}
-                            className='border-solid border cursor-pointer border-red-900 my-1 shadow-inner overflow-hidden flex flex-row rounded-md h-16 text-center'
+                            className='border-solid border cursor-pointer border-gray-300 my-1 shadow-inner overflow-hidden flex flex-row rounded-md h-16 text-center'
                             onClick={(e)=>{console.log(o.codItinerario, o.apelidoLinha, o.prev);MudarComponente(<Rota props={[coord, o.codItinerario, o.numVeicGestor, o.prev]}/>);e.stopPropagation();}}
                         >
                         <div className='w-1/4 bg-gray-200 p-0 ' >

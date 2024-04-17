@@ -6,12 +6,12 @@ import Proximos from "./Proximos";
 
 
 export const MenuParadas = ({props}) => {
-    const [cod_parada, MudarComponente] = props; 
+    const [cod_parada, MudarComponente] = props;
     const [Paradas, setParadas] = useState({});
     var paradasSplited = {};
     useEffect(()=>{
-        getContent(url + `buscarParadasPorLinha/${cod_parada}/1/Recebe`, setParadas)
-        
+        getContent(url + `paradas-por-linha/${cod_parada}`, setParadas)
+
     },[cod_parada])
     if (Object.keys(Paradas).length > 0 && Paradas.sucesso){
         Paradas.paradas.forEach((parada) => {
@@ -23,7 +23,7 @@ export const MenuParadas = ({props}) => {
         })
     }
     console.log(paradasSplited, typeof MudarComponente)
-    
+
 
     return (<><div className="flex min-w-fit w-full align-center rounded-md min-h-80 ">
                 <div className='bg-red-400 flex flex-col rounded-md shadow-inner m-auto'>
