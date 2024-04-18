@@ -21,4 +21,18 @@ export const BusIcon = L.icon({
 })
 
 
+export const BusIconBlue = L.icon({
+    iconUrl:"./bus_blue.png",
+    iconSize: [28,28],
+    iconAnchor: [14,14]
+})
+
+
+export const BusIconGray = L.icon({
+    iconUrl:"./bus_gray.png",
+    iconSize: [28,28],
+    iconAnchor: [14,14]
+})
+
+
 

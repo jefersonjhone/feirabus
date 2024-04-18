@@ -61,7 +61,7 @@ function Marcador({coord, icon, id, desc}){
 export default function  Mapa(){
     const mapa = useMemo(()=>{
         return(<>
-            <MapContainer center={[-12.256106, -38.922214]} zoom={13} style={{ height: '100vh', width: '100%' }} >
+            <MapContainer center={[-12.254463237869844,-38.960094451904304]} zoom={13} style={{ height: '100vh', width: '100%' }} >
                 <div className='absolute container' style={{height: 3, width:'100%', zIndex:401}}>
                     <div className='text-xl text-center bg-slate-100 '>
                     </div>

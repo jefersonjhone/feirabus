@@ -1,8 +1,8 @@
-import {MapContainer, Marker, TileLayer} from "react-leaflet"
+import {MapContainer, Marker, Popup, TileLayer} from "react-leaflet"
 import AntPath from "../AntPath"
 import {useEffect, useState} from "react";
 import getContent from "../../utils/getContent";
-import {BusIcon, ClickIcon} from "../icons/Icons";
+import {BusIconBlue, BusIconGray, ClickIcon} from "../icons/Icons";
 import url from "../../utils/urls";
 
 
@@ -32,7 +32,11 @@ export default function Rota({props}){
 
 
     const onibus = (numVeicGestor && Object.keys(Veiculos).length > 0 && Veiculos.veiculos !== undefined )?
-        Veiculos.veiculos.map((o) => <Marker icon={BusIcon} position={[o.lat, o.long]}></Marker>):
+        Veiculos.veiculos.map((o) =>{
+            if(o.numVeicGestor === numVeicGestor){
+                return <Marker icon={BusIconBlue} position={[o.lat, o.long]}><Popup>ola</Popup></Marker>
+            }
+            return <Marker style={{opacity:'.6'}}  icon={BusIconGray} position={[o.lat, o.long]}></Marker>}):
         <></>
 
     const AntPathRota = (Object.keys(Rotas).length > 0 && Rotas.itinerarios !== undefined ) ?
