@@ -29,8 +29,6 @@ export default function  Mapa(){
             setLocalAtivo(pontosProximos.paradas[0]);
         }
         if (!isEmpty(localAtivo)){
-            console.log("setando o local ativo :\n o local ativo é :", Object.keys(localAtivo), isEmpty(localAtivo));
-
             setHistorico([ <Paradas key={1} props= {
                  [   pontosProximos,
                      localAtivo,
@@ -48,11 +46,18 @@ export default function  Mapa(){
 
     const HandlerRota = ({props})=>{
         const [RotaAtiva, itinerarioAtivo] = props;
-        
-        if (RotaAtiva !== undefined && itinerarioAtivo.codItinerario !== undefined && RotaAtiva.props.props[1] === itinerarioAtivo.codItinerario){return RotaAtiva}
-        else{console.log("rota não definida ainda!")}
-
+        if (RotaAtiva !== undefined &&
+            itinerarioAtivo.codItinerario !== undefined &&
+            RotaAtiva.props.props[1] === itinerarioAtivo.codItinerario){
+                return RotaAtiva
+        }
+        else{console.log("não tem rota!")}
     }
+    const handlerLocalAtivo = (newLocalAtivo)=>{
+        setRotaAtiva({});
+        setLocalAtivo(newLocalAtivo);
+    }
+
     const MudarComponente = (componente) => {
 
         if (historico.length === 0 || componente.key !== historico[historico.length -1].key){
@@ -91,7 +96,9 @@ export default function  Mapa(){
                         <Marcadores props={[pontosProximos, LocalClique, localAtivo, setLocalAtivo]}/>
                     </MapContainer>
                 </div>
-                <Menu> {componenteAtual}</Menu>
+                <Menu>
+                    {componenteAtual}
+                </Menu>
             </div>
         </>
     return (<>
