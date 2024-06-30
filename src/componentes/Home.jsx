@@ -3,9 +3,9 @@ import getContent from "../utils/getContent"
 import {useMemo, useState} from "react";
 
 export default function Home(){
+    var opcoes = ["Encontrar no mapa", "Minhas paradas", "Pesquisar por linha", "Paradas proximas", "Sobre"]
     const menu = useMemo (() =>{
 
-    var opcoes = ["Encontrar no mapa", "Minhas paradas", "Pesquisar por linha", "Paradas proximas", "Sobre"]
 
         return <div className="container flex flex-column w-full h-screen text-center align-center justify-center">
                 <div className="h-full text-xl flex flex-col justify-center text-center">
@@ -18,6 +18,6 @@ export default function Home(){
                 </div>
             </div>
 
-    })
+    }, [opcoes])
     return <>{menu}</>
 }

@@ -111,7 +111,7 @@ export function Rota({props}){
 
             <AntPath
                 positions={Rotas.itinerarios.map((o)=>[o.coordY, o.coordX])}
-                options={{ delay: 2000, dashArray: [10, 20], weight: 5, color: '#000', opacity:1}} />
+                options={{ delay: 2000, dashArray: [10, 20], weight: 5, color: '#000', opacity:1, hardwareAccelerated:true}} />
         </>:
             <></>)
 

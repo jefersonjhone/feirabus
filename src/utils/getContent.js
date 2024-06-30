@@ -1,4 +1,4 @@
-const getContent = (ApiEndPoint, setState, id) =>{
+const getContent = (ApiEndPoint, setState) =>{
     fetch(ApiEndPoint).then(e => e.json()).then(e => setState(e))
 
 }
