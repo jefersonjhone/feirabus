@@ -10,7 +10,7 @@ function App() {
         <Router>
             <Routes>
                 <Route path="/" element={<Home/>} />
-                <Route path="/Encontrar-no-mapa" element={<Mapa/>}/>
+                <Route path="/Encontrar-no-Mapa" element={<Mapa/>}/>
                 <Route path="/Pesquisar-por-linha" element={<PesquisarPorLinha/>}/>
             </Routes>
    </Router>)
