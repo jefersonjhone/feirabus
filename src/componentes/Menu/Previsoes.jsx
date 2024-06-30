@@ -17,21 +17,21 @@ export function Veiculos({props}){
 
     useEffect( () => {
         //map.flyTo([localAtivo.y, localAtivo.x], 14);
-        var intervalo = setInterval(()=>{}, 100000);
+        var intervalo = setInterval(()=>{}, 10000);
         if (numVeicGestor !== undefined){
             if (Veiculos.veiculos === undefined ||
             (Veiculos.veiculos.filter((v) => v.numVeicGestor === numVeicGestor).length === 0)){
                 getContent(
                     url+`veiculos-por-itinerario/${numItinerario}`,
                     setVeiculos
-                );
-                intervalo = setInterval( () =>{
-                    getContent(
-                        url+`veiculos-por-itinerario/${numItinerario}`,
-                        setVeiculos
-                    )
-                }, 10000)
-            } 
+                );}
+            intervalo = setInterval( () =>{
+                getContent(
+                    url+`veiculos-por-itinerario/${numItinerario}`,
+                    setVeiculos
+                )
+            }, 10000)
+            
         }
         return ()=> clearInterval(intervalo);
     })
