@@ -8,7 +8,7 @@ import isEmpty from "../../utils/isEmpty";
 export const MapClick = ({props}) =>{
     const [setPontosProximos,
         setLocalPontosProximos,
-        localAtivo] = props;
+        localAtivo, setRotaAtiva] = props;
     const map = useMapEvent('click', (e) => {
 
         if (!isEmpty(localAtivo)){
@@ -18,11 +18,12 @@ export const MapClick = ({props}) =>{
             }
         }
         map.flyTo(e.latlng, 16);
-        setLocalPontosProximos(e.latlng)
+        setLocalPontosProximos(e.latlng);
+        setRotaAtiva({});
         getContent(
             url + `paradas-proximas/${e.latlng.lng}/${e.latlng.lat}`,
             setPontosProximos
-        )    
+        )
     })
 }
 
