@@ -1,6 +1,6 @@
 ![Logo](https://raw.githubusercontent.com/jefersonjhone/feirabus/main/public/logo_feirabus.png)
 
-[![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)[![GitHub Issues](https://img.shields.io/github/issues/Jefersonjhone/feirabus.svg)](https://github.com/Jefersonjhone/feirabus/issues)
+[![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)[![Live Demo](https://img.shields.io/badge/demo-online-green.svg)](https://feirabus.vercel.app)[![GitHub Issues](https://img.shields.io/github/issues/Jefersonjhone/feirabus.svg)](https://github.com/Jefersonjhone/feirabus/issues)
 
 *Esse é um Webapp construído para ajudar a população de Feira de Santana a usar o sistema de transporte público, com recursos como previsão dos próximos ônibus em tempo real, localização exata dos veículos, pontos de ônibus próximos, comparação de rotas, quadros de horários e etc.*
 
