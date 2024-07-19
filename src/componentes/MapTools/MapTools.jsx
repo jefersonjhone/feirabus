@@ -9,6 +9,7 @@ export const MapClick = ({props}) =>{
     const [setPontosProximos,
         setLocalPontosProximos,
         localAtivo, setRotaAtiva] = props;
+
     const map = useMapEvent('click', (e) => {
 
         if (!isEmpty(localAtivo)){
