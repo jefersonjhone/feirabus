@@ -8,7 +8,6 @@
 *Toda a API e a base de dados pertencem a uma empresa privada, este app é somente uma reorganização desses recursos e informações com o intúito de facilitar o acesso da população à esses dados.*
 
 ![Sreenshot 1](https://raw.githubusercontent.com/jefersonjhone/feirabus/main/images/image1.png)
-![Screenshot 2](https://raw.githubusercontent.com/jefersonjhone/feirabus/main/images/image2.png)
 ![Screenshot 3](https://raw.githubusercontent.com/jefersonjhone/feirabus/main/images/image3.png)
 
 ## Demonstração
