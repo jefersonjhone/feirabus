@@ -14,6 +14,10 @@ export function Veiculos({props}){
     const [Veiculos, setVeiculos] = useState({});
     const map = useMap();
     var [localAtivo, numItinerario, numVeicGestor, previsao, itinerarioAtivo] = props;
+    const fetchContent = (ApiEndPoint) =>{
+        fetch(ApiEndPoint).then(e => e.json()).then(e=>{setVeiculos(e)})
+    }
+
 
     useEffect( () => {
         //map.flyTo([localAtivo.y, localAtivo.x], 14);
@@ -21,26 +25,20 @@ export function Veiculos({props}){
         if (numVeicGestor !== undefined){
             if (Veiculos.veiculos === undefined ||
             (Veiculos.veiculos.filter((v) => v.numVeicGestor === numVeicGestor).length === 0)){
-                getContent(
-                    url+`veiculos-por-itinerario/${numItinerario}`,
-                    setVeiculos
-                );}
+            fetchContent(url+`veiculos-por-itinerario/${numItinerario}`);
             intervalo = setInterval( () =>{
-                getContent(
-                    url+`veiculos-por-itinerario/${numItinerario}`,
-                    setVeiculos
-                )
-            }, 10000)
-            
-        }
+                fetchContent(url+`veiculos-por-itinerario/${numItinerario}`);}
+            , 10000)
+
+        }}
         return ()=> clearInterval(intervalo);
-    })
+    },[previsao, numItinerario, itinerarioAtivo])
 
 
 
 
     const onibus = (numVeicGestor && Object.keys(Veiculos).includes("veiculos"))?
-        Veiculos.veiculos.map(v =>{ 
+        Veiculos.veiculos.map(v =>{
             if (v.numVeicGestor === numVeicGestor){
                 //map.flyTo([v.lat, v.long], 12);
                 return <Marker
@@ -76,20 +74,24 @@ export function Rota({props}){
     const [Rotas, setRota] = useState({});
     const map = useMap();
     var [localAtivo, numItinerario, numVeicGestor, previsao, itinerarioAtivo] = props;
-
+ const fetchContent = (ApiEndPoint) =>{
+     fetch(ApiEndPoint).then(
+         e => e.json()).then(
+             e=>{
+                 if (e !== Rotas){
+                     setRota(e)
+                 }
+             }
+         )
+ }
 
     useEffect( () => {
 
         if ( Rotas.itinerarios === undefined ||(
         itinerarioAtivo.codItinerario !== undefined &&
         numItinerario !== itinerarioAtivo.codItinerario)){
-            console.log(Rotas.itinerarios, itinerarioAtivo.codItinerario, numItinerario)
             //map.flyTo([localAtivo.y, localAtivo.x], 14);
-            console.log("local ativo", localAtivo)
-            getContent(
-                url+`itinerarios/${numItinerario}`,
-                setRota
-            );
+            fetchContent(url+`itinerarios/${numItinerario}`);
         }
     }, [localAtivo, itinerarioAtivo, numItinerario])
 
@@ -113,7 +115,7 @@ export function Rota({props}){
                 positions={Rotas.itinerarios.map((o)=>[o.coordY, o.coordX])}
                 options={{ delay: 2000, dashArray: [10, 20], weight: 5, color: '#000', opacity:1, hardwareAccelerated:true}} />
         </>:
-            <></>)
+            <></>, [Rotas])
 
         return (<> {AntPathRota} <Veiculos props={[localAtivo, numItinerario, numVeicGestor, previsao, itinerarioAtivo]}/></>)
 
@@ -139,11 +141,18 @@ export function Previsoes({props}){
     const [itinerario__, setItinerario__ ] = useState(undefined);
     const [ProximosOnibus, setProximosOnibus] = useState({})
 
-    useEffect(()=>{
-        var intervalo = setInterval(()=>{},10000);
-        if (ProximosOnibus.previsoes === undefined){
-            getContent(url +`previsoes/${localAtivo.cod}`, setProximosOnibus);
+    const fetchContent = (ApiEndPoint) =>{
+        fetch(ApiEndPoint).then(e => e.json()).then(e => {if (e.previsoes !== ProximosOnibus.previsoes){setProximosOnibus(e)}})
+}
 
+
+    useEffect(()=>{
+
+        const intervalo = setInterval(()=>{
+            fetchContent(url +`previsoes/${localAtivo.cod}`);
+        }, 30000)
+        if (ProximosOnibus.previsoes === undefined){
+            fetchContent(url +`previsoes/${localAtivo.cod}`);
         }
         if (itinerario__ === undefined && ProximosOnibus.previsoes !== undefined && !isEmpty(ProximosOnibus.previsoes)){
             const e = ProximosOnibus.previsoes[0];
@@ -152,8 +161,9 @@ export function Previsoes({props}){
             setRotaAtiva(<Rota props={[localAtivo, e.codItinerario, e.numVeicGestor, e.previsao, itinerarioAtivo ]}/>);
         }
 
-        scrollToElement();
-        return ()=>{clearInterval(intervalo)}
+
+    scrollToElement();
+        return ()=>clearInterval(intervalo)
            }, [localAtivo, ProximosOnibus, itinerarioAtivo, itinerario__])
 
 

@@ -1,70 +1,58 @@
-# Getting Started with Create React App
+![Logo](https://raw.githubusercontent.com/jefersonjhone/feirabus/main/public/logo_feirabus.png)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+[![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)[![GitHub Issues](https://img.shields.io/github/issues/Jefersonjhone/feirabus.svg)](https://github.com/Jefersonjhone/feirabus/issues)
 
-## Available Scripts
+*Esse é um Webapp construído para ajudar a população de Feira de Santana a usar o sistema de transporte público, com recursos como previsão dos próximos ônibus em tempo real, localização exata dos veículos, pontos de ônibus próximos, comparação de rotas, quadros de horários e etc.*
 
-In the project directory, you can run:
+![important](https://img.shields.io/badge/-aviso%20importante!-yellow)
+*Toda a API e a base de dados pertencem a uma empresa privada, este app é somente uma reorganização desses recursos e informações com o intúito de facilitar o acesso da população à esses dados.*
 
-### `npm start`
+![Sreenshot 1](https://raw.githubusercontent.com/jefersonjhone/feirabus/main/images/image1.png)
+![Screenshot 2](https://raw.githubusercontent.com/jefersonjhone/feirabus/main/images/image2.png)
+![Screenshot 3](https://raw.githubusercontent.com/jefersonjhone/feirabus/main/images/image3.png)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Demonstração
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
 
-### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Stack utilizada
 
-### `npm run build`
+**Front-end:** React, TailwindCSS
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+**Back-end:** Node
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Apêndice
 
-### `npm run eject`
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Funcionalidades
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- Previsões em tempo real
+- Localização precisa dos ônibus
+- Buscar pontos de ônibus próximos
+- Buscar quadro de Horários
+- Buscar paradas de uma linha
+- Comparar rotas
 
-## Learn More
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Contribuindo
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Este é um projeto para benefício coletivo e contribuições são sempre bem-vindas!
 
-### Code Splitting
+Veja `contribuindo.md` para saber como começar.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Por favor, siga o `código de conduta` desse projeto.
 
-### Analyzing the Bundle Size
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Autores
 
-### Making a Progressive Web App
+- [@jeferson jhone](https://www.github.com/jefersonjhone)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
 
-### Advanced Configuration
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## Licença
 
-### Deployment
+[GPL3](https://choosealicense.com/licenses/gpl-3.0/)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)

@@ -91,7 +91,7 @@ export default function Paradas({props}){
                     </img>
                 </div>
                 <div className='w-11/12 '>
-                    <h3 className='font-bold text-sm font-sans  text-lg sm:text-xl'>
+                    <h3 className='font-semibold font-sans text-base md:text-lg'>
                         {parada.desc}
                     </h3>
                     <span className='text-xs  md:text-sm text-gray-400 text-base'>
