@@ -120,3 +120,15 @@
   transform: scale(.9);
   transition: opacity 1000ms, transform 1000ms;
 }
+
+
+
+details summary {
+    outline: none; /* Remove a borda de foco ao clicar */
+    cursor: pointer; /* Mantém o cursor de pointer */
+  }
+
+details summary::-webkit-details-marker {
+}
+details[open] summary {
+}
