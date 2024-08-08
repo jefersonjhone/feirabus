@@ -14,10 +14,6 @@ import isEmpty from '../utils/isEmpty.js';
 
 
 const historicoContext = createContext(null);
-const localContext = createContext(null);
-const pontosproximosContext = createContext(null);
-const RotaContext = createContext(null);
-const itinerarioContext = createContext(null);
 
 
 export default function  Mapa(){

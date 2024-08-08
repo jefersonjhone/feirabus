@@ -87,7 +87,7 @@ export default function Paradas({props}){
 
                 <div className='img-linha w-1/6 sm:w-1/3 flex justify-center  opacity-70'>
                     <img  style={{filter: "drop-shadow(10px 20px 8px #a6abad)"}}
-                          src="./Encontrar no mapa.png" alt="Encontrar no mapa">
+                          src="./explorar.png" alt="Encontrar no mapa">
                     </img>
                 </div>
                 <div className='w-11/12 '>
