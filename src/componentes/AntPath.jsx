@@ -1,22 +1,21 @@
-
-import { useEffect } from 'react';
-import { useMap } from 'react-leaflet';
-import 'leaflet-ant-path/dist/leaflet-ant-path';
-import L from 'leaflet';
+import { useEffect } from 'react'
+import { useMap } from 'react-leaflet'
+import 'leaflet-ant-path/dist/leaflet-ant-path'
+import L from 'leaflet'
 const AntPath = ({ positions, options }) => {
-  const map = useMap();
+  const map = useMap()
 
   useEffect(() => {
-    if (!map) return;
+    if (!map) return
 
-    const antPath = L.polyline.antPath(positions, options).addTo(map);
+    const antPath = L.polyline.antPath(positions, options).addTo(map)
 
     return () => {
-      map.removeLayer(antPath);
-    };
-  }, [map, positions, options]);
+      map.removeLayer(antPath)
+    }
+  }, [map, positions, options])
 
-  return null;
-};
+  return null
+}
 
-export default AntPath;
+export default AntPath
