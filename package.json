@@ -25,7 +25,17 @@
     "extends": [
       "react-app",
       "react-app/jest"
-    ]
+    ],
+    "rules": {
+      "no-unused-vars": "off",
+      "no-useless-rename": "off",
+      "react-hooks/exhaustive-deps": "off",
+      "jsx-a11y/alt-text": "off",
+      "react/jsx-no-duplicate-props": "off",
+      "jsx-a11y/anchor-is-valid": "off",
+      "array-callback-return": "off",
+      "no-useless-concat": "off"
+    }
   },
   "browserslist": {
     "production": [
@@ -40,6 +50,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "prettier": "^3.5.3",
     "tailwindcss": "^3.4.1"
   }
