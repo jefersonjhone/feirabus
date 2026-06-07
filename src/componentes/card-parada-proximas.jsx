@@ -3,6 +3,7 @@ import { useGeolocation } from '../hooks/useGeolocation'
 import { Editar, PinoLocalizacao } from './icons'
 
 export default function CardParadasProximas() {
+  /*
   const {
     location,
     error: location_error,
@@ -17,7 +18,9 @@ export default function CardParadasProximas() {
     data: paradas,
     error: error_paradas,
   } = useFetch(url)
-
+  */
+  let paradas = undefined;
+  let location = undefined;
   return (
     <div className="md:col-span-1 rounded-md shadow-md border overflow-hidden">
       <div className="h-2 bg-gradient-to-r from-slate-200 to-slate-400 transition-all duration-300 ease-in-out mb-2 "></div>
