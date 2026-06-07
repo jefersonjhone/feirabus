@@ -33,9 +33,9 @@ export const Horarios = ({ props }) => {
   const { line, handle_exit, directions, saida, setSaida } = props
 
   const {
-    loading: loading,
+    loading,
     data: horarios,
-    error: error,
+    error,
   } = useFetch(url + `/linhas/${line.cod}/horarios`)
 
   const days =

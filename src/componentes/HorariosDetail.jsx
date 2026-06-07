@@ -49,9 +49,9 @@ export const HorariosDetail = ({ props }) => {
   const { line, handle_exit } = props
 
   const {
-    loading: loading,
+    loading,
     data: horarios,
-    error: error,
+    error,
   } = useFetch(url + `/linhas/${line.cod}/horarios`)
 
   const directions = horarios !== undefined ? Object.keys(horarios) : []

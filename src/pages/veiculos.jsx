@@ -49,9 +49,9 @@ export const Veiculos = () => {
   const inputRef = useRef(null)
   const [search, SetSearch] = useState(null)
   const {
-    loading: loading,
+    loading,
     data: linhas,
-    error: error,
+    error,
   } = useFetch(url + '/linhas/')
   const [params] = useSearchParams()
   const navigate = useNavigate()

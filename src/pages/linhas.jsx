@@ -20,9 +20,9 @@ export const Linhas = () => {
   const navigate = useNavigate()
   const [params] = useSearchParams()
   const {
-    loading: loading,
+    loading,
     data: linhas,
-    error: error,
+    error,
   } = useFetch(url + '/linhas/')
 
   const tab = params.get('tab')
