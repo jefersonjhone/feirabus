@@ -84,9 +84,9 @@ export const LineDetail = ({ line, handle_exit, tab }) => {
   }
 
   const {
-    loading: loading,
+    loading,
     data: paradas,
-    error: error,
+    error,
   } = useFetch(url + `/linhas/${line.cod}/paradas/coordenadas`)
 
   const {
