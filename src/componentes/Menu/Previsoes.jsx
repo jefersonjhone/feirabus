@@ -76,7 +76,8 @@ const CardPrincipal = (PrevVeic, handleClickPrevVeic, divRef) => {
           <img
             style={{ filter: 'drop-shadow(10px 20px 8px #a6abad)' }}
             src="./bus_blue.png"
-          ></img>
+            alt='blue bus icon'
+          />
         </div>
         <div className="w-11/12 ">
           <h3 className="font-medium text-sm font-sans  text-lg sm:text-xl">
@@ -107,14 +108,9 @@ const CardPrincipal = (PrevVeic, handleClickPrevVeic, divRef) => {
 }
 
 export function Previsoes({
-  pontosProximos,
   currentBusStop,
-  setCurrentBusStop,
-  setCurrentScreen,
-  setRotaAtiva,
 }) {
   const divRef = useRef()
-  const localClique = {}
   const [itinerario__, setItinerario__] = useState(undefined)
   const [prevVeic, setPrevVeic] = useState({})
   console.log(itinerario__)
@@ -126,19 +122,19 @@ export function Previsoes({
 
   useEffect(() => {
     if (prevVeic.previsoes === undefined) {
-      fetchContent(url + `/previsoes/${currentBusStop.cod}`)
+      fetchContent(`${process.env.REACT_APP_API_URL}/paradas/${currentBusStop.cod}/previsoes`)
       return
     }
 
     if (prevVeic.previsoes !== undefined && isEmpty(prevVeic.previsoes)) return
 
     const intervalo = setInterval(() => {
-      fetchContent(url + `previsoes/${currentBusStop.cod}`)
+      fetchContent(`${process.env.REACT_APP_API_URL}/paradas/${currentBusStop.cod}/previsoes`)
     }, 30000)
 
     scrollToElement(divRef.current)
     return () => clearInterval(intervalo)
-  }, [currentBusStop])
+  }, [currentBusStop.cod])
 
   useEffect(() => {
     if (itinerario__ !== undefined) return
@@ -191,7 +187,6 @@ export function Previsoes({
       <div className="font-base text-xl my-2 fixed top-0 left-0 right-0"></div>
       <hr />
       <div className=" h-full overflow-y-scroll pb-12 pt-12">
-        proximos ônibus para
         <br />
         <h3 className="text-">{currentBusStop.desc}</h3>
         {previsoes_()}

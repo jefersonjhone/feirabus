@@ -4,100 +4,139 @@ import { Estrela, Onibus, PinoLocalizacao, Relogio, Seta } from './icons'
 export default function LinhasPopulares() {
   const linhas = [
     {
-      name: 'EXPRESSO UNIVERSITÁRIO',
-      sgl: '003',
-      sentido: 'sentido UEFS',
-      horarios: '6:30 - 20:00',
+      name: 'POLO INDUSTRIAL | TERMINAL CENTRAL',
+      sgl: '009',
+      sentido: ' POLO INDUSTRIAL',
+      imagem:"/ROTA_LINHA_009.png",
+      horarios: '4:45 - 20:20',
+      paradas: 30,
+    },    {
+      name: 'CONDER | JARDIM EUROPA | AV. MARIA QUITERIA',
+      sgl: '108A',
+      sentido: ' CONDER',
+      imagem:"/ROTA_LINHA_108A.png",
+      horarios: '7:15- 17:45',
       paradas: 42,
-      popularidade: '5',
+    },    {
+      name: 'JARDIM BRASIL VIA COND. AZALEIAS',
+      sgl: '07A',
+      sentido: ' JARDIM BRASIL',
+      imagem:"/ROTA_LINHA_07A.png",
+      horarios: '4:40 - 21:50',
+      paradas: 35,
     },
     {
-      name: 'EXPRESSO UNIVERSITÁRIO',
+      name: 'UEFS DIRETA VIA TERMINAL NORTE | TERMINAL CENTRAL',
       sgl: '003',
-      sentido: 'sentido UEFS',
-      horarios: '5:40 - 21:00',
-      paradas: 25,
-      popularidade: '4',
-    },
-    {
-      name: 'EXPRESSO UNIVERSITÁRIO',
-      sgl: '002',
-      sentido: 'sentido TERMINAL NORTE',
-      horarios: '4:15 - 22:00',
-      paradas: 34,
-      popularidade: '3',
+      sentido: ' TERMINAL CENTRAL',
+      imagem:"/ROTA_LINHA_003.png",
+      horarios: '6:30 - 19:50',
+      paradas: 24,
+    },    {
+      name: 'SUBAÉ | 35 BI - VIA JOMAFA',
+      sgl: '025',
+      sentido: ' SUBAÉ  ',
+      imagem:"/ROTA_LINHA_25.png",
+      horarios: '6:30 - 21:50',
+      paradas: 28,
+    },    {
+      name: 'BRT - VIA GETULIO VARGAS',
+      sgl: '300',
+      sentido: ' BRT GETÚLIO VARGAS',
+      imagem:"/ROTA_LINHA_300.png",
+      horarios: '6:00 - 19:45',
+      paradas: 7,
     },
   ]
   return (
-    <section className="mb-10 max-w-[1200px] mx-auto ">
-      <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-3xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-indigo-500">
+    <section className="mb-10 max-w-[1200px] mx-auto  ">
+      <div className="mb-6 flex items-center justify-between md:p-2">
+        <h2 className="text-3xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-sky-500 to-indigo-500">
           Rotas Populares
         </h2>
         <button className="flex items-center text-blue-600 hover:text-blue-700">
           Ver todas <Seta />
         </button>
       </div>
-      <div className="grid md:grid-cols-3 px-2 gap-4 ">
+      <div className="grid md:grid-cols-1 md:px-2 gap-4 ">
         {/* linhas */}
 
+        
         <CardLinhaPopular
-          linha={linhas[0]}
-          className="bg-gradient-to-r from-red-100 to-red-600"
+        linha={linhas[1]}
+        className="bg-gradient-to-r from-blue-300 to-blue-500"
+        className="bg-gradient-to-r from-purple-400 to-purple-600 "
+        className="bg-gradient-to-r from-purple-500 to-purple-900 border border-white"
         />
         <CardLinhaPopular
-          linha={linhas[1]}
-          className="bg-gradient-to-r from-blue-100 to-blue-600"
+        linha={linhas[2]}
+        className="bg-gradient-to-r from-green-300 to-green-500"
+        className="bg-gradient-to-r from-purple-400 to-purple-600 "
+        className="bg-gradient-to-r from-purple-500 to-purple-900 border border-white"
+        text="green-500"
         />
         <CardLinhaPopular
-          linha={linhas[2]}
-          className="bg-gradient-to-r from-green-100 to-green-600"
+        linha={linhas[3]}
+        className="bg-gradient-to-r from-orange-300 to-yellow-500"
+        className="bg-gradient-to-r from-purple-500 to-purple-900 border border-white"
         />
+        
+        <CardLinhaPopular
+        linha={linhas[5]}
+        className="bg-gradient-to-r from-purple-500 to-purple-900 border border-white"
+        />
+        
       </div>
     </section>
   )
 }
 
-function CardLinhaPopular({ linha, className }) {
-  const { name, sgl, sentido, paradas, horarios, popularidade } = linha
+function CardLinhaPopular({ linha, className, text }) {
+  const { name, sgl, sentido, imagem, paradas, horarios } = linha
   return (
-    <div
-      className={` w-full border rounded-md overflow-hidden shadow-md hover:shadow-lg hover:translate-y-[-4px] transition-all duration-300 ease-in-out `}
-    >
-      <div className={className + ' h-1'}></div>
-      <div className="w-full flex flex-row gap-2 items-center mb-1 mt-2 mx-2 p-2">
-        <div
-          className={
-            className +
-            ` flex flex-row items-center justify-center gap-1 md:w-16 md:h-14 aspect-square font-bold rounded-md text-white text-center p-1 `
-          }
-        >
-          <Onibus className="w-6 h-6 " />
-          <span className="text-lg">{sgl}</span>
-        </div>
-        <div className="w-full ">
-          <h1 className="font-semibold">{name} </h1>
-          <div className="flex items-center font-medium gap-1 text-sm text-gray-500">
-            <span>
-              <Seta className="h-4" />
-            </span>
-            {sentido}
+  <Link
+        to={`linhas/${sgl}/?sentido=${sentido}`}
+        className={`flex flex-col md:flex-row md:items-center  items-start w-full py-2 border rounded-md overflow-hidden shadow-md  
+        hover:shadow-lg hover:translate-y-[-2px] transition-all duration-300 ease-in-out group cursor-pointer`}
+        
+  >
+      
+      <div className="md:w-2/3 ">
+        <div className="w-full flex flex-row gap-1 items-start mb-1 mt-2 px-1">
+          <div
+            className={
+              className +
+              ` flex flex-row items-center justify-center gap-1 md:w-22  h-8 md:h-10 px-2 py-0 aspect-square font-bold rounded-md text-white text-center `
+            }
+          >
+            <Onibus className="w-6 h-6 " />
+            <span className="text-lg">{sgl}</span>
+          </div>
+          <div className="w-full  flex flex-col">
+            <h1 className="text-sm md:text-base font-normal  text-slate-950 " >{name}</h1>
+            <div className="flex items-center gap-1 text-sm font-light text-gray-500 text-nowrap">
+              <span>
+                <Seta className="h-4" />
+              </span>
+              Sentido {sentido}
+            </div>
           </div>
         </div>
       </div>
-      <div className="pt-1 gap-1 px-2">
-        <div className="flex gap-4 w-full">
-          <div className="flex flex-col items-center gap-1 text-sm font-medium bg-slate-50 w-full rounded-lg p-1">
+     
+      <div className="pt-1 gap-1 px-2 flex">
+        <div className="flex gap-2 w-full ">
+          <div className="flex items-center gap-1 text-sm font-medium bg-slate-50 w-full rounded-lg p-1">
             <h3 className="flex items-center gap-2">
               <span className="text-sky-700">
                 <Relogio className=" h-4 " />
               </span>
               Horários
             </h3>
-            <span className="font-medium text-gray-500">{horarios}</span>
+            <span className="font-medium text-gray-500 flex text-nowrap">{horarios}</span>
           </div>
 
-          <div className="flex w-full flex-col items-center gap-1 text-sm font-medium bg-slate-50 rounded-lg p-1">
+          <div className="flex w-full items-center gap-1 text-sm font-medium bg-slate-50 rounded-lg p-1">
             <h3 className="flex items-center gap-2">
               <span className="text-purple-600">
                 <PinoLocalizacao className="h-4" />
@@ -107,35 +146,7 @@ function CardLinhaPopular({ linha, className }) {
             <span className="font-medium text-slate-500">{paradas}</span>
           </div>
         </div>
-
-        <div className="flex items-center gap-2 text-sm font-medium mt-4 text-sm font-medium bg-slate-50 rounded-lg p-1 px-2">
-          <span>
-            <PinoLocalizacao className="h-4" />
-          </span>
-          Popularidade:{' '}
-          <span className="font-bold text-slate-500 flex">
-            {Array.from({ length: 5 }).map((_, i) =>
-              i < popularidade ? (
-                <Estrela className="h-4 fill--500 text-orange-600 font-semibold  " />
-              ) : (
-                <Estrela className="h-4 fill-gray-400" />
-              )
-            )}
-          </span>
-        </div>
-
-        <div className="flex justify-end">
-          <Link
-            className="text-blue-500 font-semibold p-2 text-end flex items-center"
-            to={`/linhas?linha=${sgl}`}
-          >
-            Detalhes{' '}
-            <span>
-              <Seta className="h-4" />
-            </span>
-          </Link>
-        </div>
       </div>
-    </div>
+      </Link>
   )
 }

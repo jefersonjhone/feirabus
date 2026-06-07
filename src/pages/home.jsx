@@ -22,6 +22,7 @@ import CardParadasProximas from '../componentes/card-parada-proximas'
 import Footer from '../componentes/footer'
 import CardBuscarRota from '../componentes/card-buscar-rota'
 import CardBuscarParada from '../componentes/card-buscar-parada'
+import Mapa from '../componentes/card-map-view'
 
 export default function Home() {
   const [pagina, SetPagina] = useState(0)
@@ -38,7 +39,7 @@ export default function Home() {
             content="Consulte horários, itinerários, paradas e linhas do transporte coletivo de Feira de Santana - Bahia. Encontre o próximo ônibus em tempo real e planeje sua rota pela cidade com rapidez e praticidade."
           />
         </Helmet>
-        <div className="h-screen">
+        <div className="h-screen ">
           <Navbar page={' '} />
           <main className="h-full relative md:h-3/5 bg-gradient-to-r from-sky-300 to-indigo-500  overflow-hidden">
             <div className=" absolute top-0 sm:h-full sm:w-1/2 md:w-1/3 z-10 overflow-hidden opacity-60 ">
@@ -104,14 +105,11 @@ export default function Home() {
             </div>
           </main>
 
-          <div className="container px-4 py-8">
+          <div className="container px-4 py-8 ">
             <AcessoRapido />
-
             <LinhasPopulares />
-
-            <section className="mb-10 max-w-[1200px] mx-auto mt-20">
-              <div className="my-10 grid gap-6 md:grid-cols-3 rounded-md ">
-                <CardParadasProximas />
+            <section className="mb-10 max-w-[1200px] mx-auto mt-20 ">
+              <div className="my-10 grid gap-6 rounded-md ">
                 <CardPrevisoes />
               </div>
             </section>

@@ -7,7 +7,7 @@ export default function InputParadas({ value, setValue }) {
   const handleSearch = (event) => {
     const text = event.target.value
     if (!text) return
-    fetch(`${process.env.REACT_APP_API_ROUTES_URL}/search?termo=${text}`)
+    fetch(`${process.env.REACT_APP_API_URL}/paradas/pesquisar?q=${text}`)
       .then((e) => e.json())
       .then((e) =>
         e.paradas ? setSearchResults(e.paradas) : setSearchResults([])
@@ -54,7 +54,7 @@ export default function InputParadas({ value, setValue }) {
                     <PinoLocalizacao className="h-4  w-4" />
                     <span className="mr-1">{e.cod}</span>
                   </div>
-                  <span className="w-full truncate">{e.desc}</span>
+                  <span className="w-full truncate">{e.desc?e.desc:e.end}</span>
                 </p>
               ))}
             </div>

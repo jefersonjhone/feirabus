@@ -20,7 +20,7 @@ export const MapFly = ({ currentPoint }) => {
   const mapinstance = useMap()
   useEffect(() => {
     if (currentPoint !== undefined && Object.keys(currentPoint).length > 0) {
-      //mapinstance.flyTo([currentPoint.y, currentPoint.x], 16)
+      mapinstance.flyTo([currentPoint.y, currentPoint.x], 16)
     }
-  }, [currentPoint])
+  }, [currentPoint.x, currentPoint.y])
 }
