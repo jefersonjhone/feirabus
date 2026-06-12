@@ -154,16 +154,7 @@ export const Linhas = () => {
               itinerários, horários, pontos de parada e informações atualizadas
               sobre o transporte público da cidade.
               </h3>
-              <div style={{ display: "none" }}>
-                {lines.map((line) => (
-                  <Link
-                    key={line.sgl}
-                    to={`/linhas/${line.sgl}`}
-                  >
-                    {line.sgl}
-                  </Link>
-                ))}
-              </div>
+         
             </div>
             <div
               style={{ transition: 'all 1s' }}
