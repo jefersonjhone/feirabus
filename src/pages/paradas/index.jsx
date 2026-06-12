@@ -117,8 +117,7 @@ export const Paradas = () => {
       <meta name="robots" content="index,follow" />
       <meta name="author" content="FeiraBus" />
     </Helmet>
-
-    </div>
+   
       <Navbar page={'paradas'} />
       <div className="w-full mx-auto text-left max-w-[1200px] ">
         <div className="label h-fit">
