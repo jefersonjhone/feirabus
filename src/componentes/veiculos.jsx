@@ -192,7 +192,7 @@ export function Mapa({ n_itinerario, paradas, linha }) {
                 <div className="transform -rotate-45">
                   <Marker
                     className=""
-                    icon={BusIconBlueTopView('/bus_top_view_blue.png')}
+                    icon={BusIconBlue}
                     position={[v.lat, v.long]}
                   />
                 </div>

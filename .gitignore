@@ -6,3 +6,4 @@ node_modules
 build/
 TODO.md 
 routes.md 
+src/utils/generate-sitemap.js

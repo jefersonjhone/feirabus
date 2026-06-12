@@ -7,10 +7,13 @@ import Mapa from '../pages/map.jsx'
 //import './App.css';
 //import Acompanhar from './componentes/Acompanhar/Acompanhar';
 //import CalcularRota from './componentes/CalcularRota.jsx';
-import { Linhas } from '../pages/linhas.jsx'
+import { Linhas } from '../pages/linhas/index'
 import { Veiculos } from '../pages/veiculos.jsx'
 import { Rotas } from '../pages/rotas.jsx'
 import Favoritos from '../pages/favoritos.jsx'
+import { LineDetail } from '../pages/linhas/linha.id'
+import { Paradas } from '../pages/paradas'
+import { StopDetail } from '../pages/paradas/parada.id'
 
 export default function AppRoutes() {
   return (
@@ -26,6 +29,9 @@ export default function AppRoutes() {
         <Route path="/explorar" element={<Mapa />} />
         <Route path="/map" element={<Map />} />
         <Route path="/linhas" element={<Linhas />} />
+        <Route path="/linhas/:cod" element={<LineDetail />} />
+        <Route path="/paradas" element={<Paradas />} />
+        <Route path="/paradas/:cod" element={<StopDetail />} />
         <Route path="/rotas" element={<Rotas />} />
         <Route path="/veiculos" element={<Veiculos />} />
         <Route path="/favoritos" element={<Favoritos />} />

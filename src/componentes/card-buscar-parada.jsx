@@ -15,7 +15,7 @@ function CardBuscarParada() {
     if (!search) {
       return
     }
-    navigate(`/mapa/paradas/?name=${search}`)
+    navigate(`/paradas/?name=${search}`)
   }
   return (
     <>
@@ -25,9 +25,16 @@ function CardBuscarParada() {
           <PinoLocalizacao className="h-4" />
         </span>
         <input
-          className="border border-1 border-gray-200 rounded-md w-full pl-10 h-10 text-sm font-medium focus:outline focus:outline-offset-1 focus:outline-gray-300"
+          className="border border-1 border-gray-200 rounded-md w-full pl-10 h-10 text-sm font-medium focus:outline focus:outline-offset-1 focus:outline-gray-300 "
           placeholder="Nome ou código da parada"
           ref={inputRef}
+          onKeyDown={(key) => {
+            if (key.code === "Enter") {
+              key.preventDefault();
+             HandleSubmit() 
+            }
+          }
+          }
           id="search"
         />
         

@@ -1,36 +1,38 @@
 import { useEffect, useRef, useState } from 'react'
-import { LineDetail } from '../componentes/LinhaDetail'
-import Navbar from '../componentes/navbar'
-import url from '../utils/urls.js'
-import { useFetch } from '../hooks/useFetch.jsx'
-import Error from '../componentes/error.jsx'
-import { BarLoading } from '../componentes/loading.jsx'
-import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Estrela, Lupa, Onibus, Seta } from '../componentes/icons.jsx'
+import { LineDetail } from './linha.id'
+import Navbar from '../../componentes/navbar'
+import url from '../../utils/urls.js'
+import { useFetch } from '../../hooks/useFetch.jsx'
+import Error from '../../componentes/error.jsx'
+import { BarLoading } from '../../componentes/loading.jsx'
+import {Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { Estrela, Lupa, Onibus, Seta } from '../../componentes/icons.jsx'
 import { Helmet } from 'react-helmet'
-
+import {useLinhasStore} from "../../stores/linhaStore"
+import { useLines } from '../../hooks/useLines'
 
 
 export const Linhas = () => {
   const [page, setPage] = useState(0)
   const [line, setline] = useState(0)
-  const [saida, setSaida] = useState(0)
   const [search, SetSearch] = useState(null)
   const inputRef = useRef(null)
   const navigate = useNavigate()
   const [params] = useSearchParams()
   const {
     loading,
-    data: linhas,
+    lines:lines_obj,
     error,
-  } = useFetch(url + '/linhas/')
+  } = useLines();
+  const lines = Object.values(lines_obj)
 
+  
   const tab = params.get('tab')
   useEffect(() => {
     if (!params.get('linha')) return
     if (page === 1) return
-    if (linhas) {
-      const line_param = linhas.filter((l) => l.sgl === params.get('linha'))
+    if (lines) {
+      const line_param = lines.filter((l) => l.sgl === params.get('linha'))
       if (line_param) {
         handleSetPage(line_param[0], 1)
         console.log('set param')
@@ -60,52 +62,82 @@ export const Linhas = () => {
   }
 
   const handleOpen = (line, page) => {
-    params.set('linha', line.sgl)
-    navigate({ search: params.toString() }, { replace: true })
+    navigate(`/linhas/${line.sgl}`)
     handleSetPage(line, page)
   }
 
   const handle_exit = () => {
-    params.delete('linha')
-    params.delete('tab')
-    navigate({ search: params.toString() }, { replace: true })
-    handleSetPage(null, 0)
+
+    navigate("/linhas/" )
   }
 
 
   return (
     <>
       <Helmet>
-        <title>Linhas de Ônibus de Feira de Santana</title>
+        <title>
+          Linhas de Ônibus de Feira de Santana (BA) | Itinerários e Horários
+        </title>
+      
         <meta
           name="description"
-          content={`Veja as paradas, itinerário, horário e pontos de parada de cada linha de ônibus de Feira de santana - Bahia.`}
+          content="Consulte todas as linhas de ônibus de Feira de Santana (BA). Veja itinerários, horários, pontos de parada e informações atualizadas do transporte público municipal."
         />
-        <link rel="canonical" href={`https://feirabus.vercel.app/linhas`} />
-
+      
+        <meta
+          name="keywords"
+          content="linhas de ônibus feira de santana, ônibus feira de santana, itinerário ônibus feira de santana, horários ônibus feira de santana, transporte público feira de santana"
+        />
+      
+        <meta name="robots" content="index,follow" />
+      
+        <link
+          rel="canonical"
+          href="https://feirabus.vercel.app/linhas"
+        />
+      
+        <meta
+          property="og:type"
+          content="website"
+        />
+      
         <meta
           property="og:title"
-          content={`Linhas de Ônibus de Feira de Santana`}
+          content="Linhas de Ônibus de Feira de Santana (BA)"
         />
+      
         <meta
           property="og:description"
-          content={`Consulte itinerário, pontos de parada e horários atualizados das Linhas de ônibus de Feira de Santana - Bahia.`}
+          content="Consulte itinerários, horários e pontos de parada de todas as linhas de ônibus de Feira de Santana."
         />
+      
         <meta
           property="og:image"
           content="https://feirabus.vercel.app/logo_feirabus.png"
         />
-
+      
         <meta
-          property="twitter:title"
-          content={`Linhas de Ônibus de Feira de Santana`}
+          property="og:url"
+          content="https://feirabus.vercel.app/linhas"
         />
+      
         <meta
-          property="twitter:description"
-          content={`Consulte itinerário, pontos de parada e horários atualizados das Linhas de ônibus de Feira de Santana - Bahia.`}
+          name="twitter:card"
+          content="summary_large_image"
         />
+      
         <meta
-          property="twitter:image"
+          name="twitter:title"
+          content="Linhas de Ônibus de Feira de Santana (BA)"
+        />
+      
+        <meta
+          name="twitter:description"
+          content="Consulte itinerários, horários e pontos de parada das linhas de ônibus de Feira de Santana."
+        />
+      
+        <meta
+          name="twitter:image"
           content="https://feirabus.vercel.app/logo_feirabus.png"
         />
       </Helmet>
@@ -118,8 +150,20 @@ export const Linhas = () => {
                 Linhas
               </h1>
               <h3 className="text-sm text-gray-500 font-medium mb-2 pl-2">
-                Encontre e explore as linhas de ônibus da sua região
+              Consulte todas as linhas de ônibus de Feira de Santana, incluindo
+              itinerários, horários, pontos de parada e informações atualizadas
+              sobre o transporte público da cidade.
               </h3>
+              <div style={{ display: "none" }}>
+                {lines.map((line) => (
+                  <Link
+                    key={line.sgl}
+                    to={`/linhas/${line.sgl}`}
+                  >
+                    {line.sgl}
+                  </Link>
+                ))}
+              </div>
             </div>
             <div
               style={{ transition: 'all 1s' }}
@@ -176,10 +220,10 @@ export const Linhas = () => {
             </div>
           )}
 
-          {linhas !== undefined &&
-            linhas.length > 0 &&
+          {lines !== undefined &&
+            lines.length > 0 &&
             (search !== null
-              ? linhas
+              ? lines
                   .filter(
                     (li) => li.sgl.includes(search) || li.nom.includes(search)
                   )
@@ -190,7 +234,7 @@ export const Linhas = () => {
                       setPage={handleOpen}
                     />
                   ))
-              : linhas.map((linha) => (
+              : lines.map((linha) => (
                   <LineCard
                     key={linha.cod}
                     linha={linha}

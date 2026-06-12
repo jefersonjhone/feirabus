@@ -33,13 +33,72 @@ export default function Home() {
     return (
       <>
         <Helmet>
-          <title>FeiraBus - Seu guia de ônibus de Feira de Santana</title>
+          <title>
+            FeiraBus | Linhas, Horários, Rotas e Paradas de Ônibus de Feira de Santana
+          </title>
+        
           <meta
             name="description"
-            content="Consulte horários, itinerários, paradas e linhas do transporte coletivo de Feira de Santana - Bahia. Encontre o próximo ônibus em tempo real e planeje sua rota pela cidade com rapidez e praticidade."
+            content="Consulte linhas de ônibus, horários, itinerários, paradas e localização de veículos em tempo real em Feira de Santana - BA. Planeje rotas, encontre pontos próximos e acompanhe o transporte público da cidade."
+          />
+        
+          <meta
+            name="robots"
+            content="index,follow"
+          />
+        
+          <link
+            rel="canonical"
+            href="https://feirabus.vercel.app/"
+          />
+        
+          <meta
+            property="og:type"
+            content="website"
+          />
+        
+          <meta
+            property="og:url"
+            content="https://feirabus.vercel.app/"
+          />
+        
+          <meta
+            property="og:title"
+            content="FeiraBus | Guia de Transporte Público de Feira de Santana"
+          />
+        
+          <meta
+            property="og:description"
+            content="Consulte linhas, horários, itinerários, paradas e localização de ônibus em tempo real em Feira de Santana."
+          />
+        
+          <meta
+            property="og:image"
+            content="https://feirabus.vercel.app/logo_feirabus.png"
+          />
+        
+          <meta
+            name="twitter:card"
+            content="summary_large_image"
+          />
+        
+          <meta
+            name="twitter:title"
+            content="FeiraBus | Transporte Público de Feira de Santana"
+          />
+        
+          <meta
+            name="twitter:description"
+            content="Consulte linhas, horários, rotas, paradas e localização de ônibus em Feira de Santana."
+          />
+        
+          <meta
+            name="twitter:image"
+            content="https://feirabus.vercel.app/logo_feirabus.png"
           />
         </Helmet>
         <div className="h-screen ">
+          
           <Navbar page={' '} />
           <main className="h-full relative md:h-3/5 bg-gradient-to-r from-sky-300 to-indigo-500  overflow-hidden">
             <div className=" absolute top-0 sm:h-full sm:w-1/2 md:w-1/3 z-10 overflow-hidden opacity-60 ">
@@ -58,10 +117,10 @@ export default function Home() {
                   simples, organizado e direto.
                 </h1>
               </div>
-              <div className="text-gray-200 text-center text-lg text-2xl font-medium">
+              <h2 className="text-gray-200 text-center text-lg text-2xl font-medium">
                 Sem telas escondidas. Procurou, achou. Informação fácil, do
                 jeito certo.
-              </div>
+              </h2>
               <div className="bg-white w-full md:w-2/3 rounded-md p-2 max-w-[800px]">
                 <div className="flex gap-2 bg-gray-200 rounded-md h-10 p-1 ">
                   {opcoes_label.map((op, i) => (

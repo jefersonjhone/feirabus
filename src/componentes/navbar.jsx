@@ -5,14 +5,14 @@ export default function Navbar({ page }) {
     ' ': 'Home',
     linhas: 'linhas',
     veiculos: 'veiculos',
-    map: 'mapa',
+    paradas: 'paradas',
   }
   return (
-    <div className="z-10 relative container flex flex-col w-full text-center items-center ">
+    <div className="z-10 relative container flex flex-col w-full text-center items-center shadow-sm ">
       <div className="h-20 max-w-[1200px] flex flex-row gap-4 justify-between items-center rounded-sm w-5/6 p-2">
         <Link to={'/'} className="flex flex-row w-full ">
           <div className="w-20 rounded-xl overflow-hidden ">
-            <img src="./logo_feirabus.png" />
+            <img src="/logo_feirabus.png" />
           </div>
         </Link>
         <nav className="w-full hidden md:flex md:flex-row justify-end">
