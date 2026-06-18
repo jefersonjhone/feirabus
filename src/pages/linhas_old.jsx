@@ -207,7 +207,7 @@ export const Rotas = () => {
             )}
           </div>
 
-          <h1 className="text-3xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-purple-500 pl-2 w-fit">
+          <h1 className="text-3xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-sky-500 to-purple-500 pl-2 w-fit">
             Linhas
           </h1>
           <h3 className="text-sm text-gray-500 font-medium mb-2 pl-2">

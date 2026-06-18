@@ -19,6 +19,7 @@ import { Link, useNavigate, useSearchParams, useParams} from 'react-router-dom'
 import { Horarios } from '../../componentes/horarios.jsx'
 import {
 Compartilhar,
+Estrela,
 Fechar,
 Onibus,
 PinoLocalizacao,
@@ -29,6 +30,7 @@ Rota,
 import { Helmet } from 'react-helmet'
 import Navbar from '../../componentes/navbar.jsx'
 import { useLinhasStore } from '../../stores/linhaStore.js'
+import { useToastStore } from '../../stores/toastStore'
 import { useLines } from '../../hooks/useLines.js'
 
 const parse_paradas = (paradas) => {
@@ -242,7 +244,8 @@ export const LineDetail = () => {
                   {line?.nom}
                 </div>
                 <div className="flex flex-row w-full justify-between">
-                  <div className="flex flex-row w-full bg-red-00 md:justify-end gap-1">
+                  <div className="flex flex-row w-full md:justify-end gap-1">
+                    <FavButtonLinha linha={line} />
                     <Link to={`/veiculos?linha=${line?.sgl}`}>
                       <div className="flex items-center justify-center bg-gray-100 rounded-md md:rounded-full p-2 w-8 h-8 md:w-10 md:h-10 aspect-square cursor-pointer hover:bg-gray-200 hover:border  hover:border-gray-500">
                         <Onibus className="h-" />
@@ -388,6 +391,32 @@ const location_label = (p, hasline) => {
       </div>
     </div>
     </Link>
+  )
+}
+
+const FavButtonLinha = ({ linha }) => {
+  const store = useLinhasStore()
+  const notify = useToastStore((s) => s.notify)
+  if (!linha) return null
+  const isFav = store.isFavLinha(linha.sgl)
+  return (
+    <button
+      onClick={(e) => {
+        e.stopPropagation()
+        const adding = !isFav
+        store.toggleFavLinha(linha)
+        notify(
+          adding
+            ? `Linha ${linha.sgl} adicionada aos favoritos`
+            : `Linha ${linha.sgl} removida dos favoritos`,
+          'success'
+        )
+      }}
+      className={`flex items-center justify-center bg-gray-100 rounded-md md:rounded-full p-2 w-8 h-8 md:w-10 md:h-10 aspect-square cursor-pointer hover:bg-gray-200 hover:border hover:border-gray-500 ${isFav ? 'text-yellow-500' : 'text-gray-400'}`}
+      title={isFav ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
+    >
+      <Estrela className={`h-5 w-5 ${isFav ? 'fill-yellow-500' : ''}`} />
+    </button>
   )
 }
 

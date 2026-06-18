@@ -1,67 +1,93 @@
 import { useEffect, useRef, useState } from 'react'
-import { Onibus, PinoLocalizacao, Seta } from './icons'
+import { useLinhasStore } from '../stores/linhaStore'
+import { useStops } from '../hooks/useStops'
+import { Estrela, Onibus, PinoLocalizacao, Seta } from './icons'
 
 export default function InputParadas({ value, setValue }) {
   const [searchResults, setSearchResults] = useState([])
+  const [focused, setFocused] = useState(false)
   const inputRef = useRef(null)
-  const handleSearch = (event) => {
-    const text = event.target.value
-    if (!text) return
-    fetch(`${process.env.REACT_APP_API_URL}/paradas/pesquisar?q=${text}`)
-      .then((e) => e.json())
-      .then((e) =>
-        e.paradas ? setSearchResults(e.paradas) : setSearchResults([])
-      )
+  const { stops, loading } = useStops()
+  const favoritosParadas = useLinhasStore((s) => s.favoritosParadas)
+
+  const handleSearch = (e) => {
+    const text = e.target.value.toUpperCase().trim()
+    if (!text || !stops) {
+      setSearchResults([])
+      return
+    }
+    const results = Object.values(stops).filter(
+      (p) => String(p.cod).includes(text) || p.desc?.toUpperCase().includes(text)
+    )
+    setSearchResults(results.slice(0, 30))
+  }
+
+  const handleFocus = () => {
+    setFocused(true)
+    if (!inputRef.current?.value && favoritosParadas.length > 0) {
+      setSearchResults(favoritosParadas)
+    }
+  }
+
+  const handleBlur = () => {
+    setFocused(false)
+    setTimeout(() => setSearchResults([]), 200)
   }
 
   const handleSelect = (value) => {
-    inputRef.current.value = value.desc
+    inputRef.current.value = value.desc || value.end
     setValue(value)
     setSearchResults([])
   }
+
   useEffect(() => {
-    if (value?.desc) {
-      inputRef.current.value = value.desc
-    }
+    if (value?.desc) inputRef.current.value = value.desc
   }, [value])
 
+  const showDropdown = searchResults.length > 0 && focused
+
   return (
-    <>
-      <div className="flex flex-row items-center w-full  ">
-        <div className="w-full flex flex-col relative">
-          <span className="absolute pl-3 pt-3 text-gray-400">
-            <PinoLocalizacao className="h-4" />
-          </span>
-          <input
-            ref={inputRef}
-            onChange={handleSearch}
-            className="border border-1 border-gray-200 rounded-md w-full pl-10 h-10 text-sm font-medium focus:outline focus:outline-offset-1 focus:outline-gray-300"
-            placeholder="Nome ou código da parada"
-            type="search"
-            name="search"
-            id="search"
-          />
-          {searchResults.length > 0 && (
-            <div className="absolute top-10 shadow-inner border shadow-md rounded-md z-90 bg-white h-fit overflow-y-scroll max-h-[300px] w-full p-2 rounded-sm mt-2">
-              {searchResults.map((e) => (
-                <p
-                  className="text-sm  font-medium flex items-center  h-6 border border-blue-600 mt-1 rounded-md"
-                  onClick={() => {
-                    handleSelect(e)
-                  }}
-                >
-                  <div className="text-blue-600 flex flex-row items-center border-r border-r-blue-600 rounded-sm mr-1">
-                    <PinoLocalizacao className="h-4  w-4" />
-                    <span className="mr-1">{e.cod}</span>
-                  </div>
-                  <span className="w-full truncate">{e.desc?e.desc:e.end}</span>
-                </p>
-              ))}
+    <div className="relative w-full">
+      <span className="absolute pl-3 text-gray-400 h-full flex items-center z-30">
+        <PinoLocalizacao className="h-4" />
+      </span>
+      <input
+        ref={inputRef}
+        onChange={handleSearch}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        className="border border-gray-200 rounded-lg w-full pl-10 pr-4 h-10 text-sm font-medium focus:outline focus:outline-offset-1 focus:outline-gray-300 shadow-sm"
+        placeholder="Nome ou código da parada"
+        type="search"
+        name="search"
+        id="search"
+      />
+      {showDropdown && (
+        <div className="absolute top-11 z-50 bg-white border border-gray-200 shadow-lg rounded-lg w-full max-h-72 overflow-y-auto">
+          {!inputRef.current?.value && (
+            <div className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-gray-400 border-b border-gray-100">
+              <Estrela className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+              Paradas favoritas
             </div>
           )}
+          {searchResults.map((e) => (
+            <button
+              key={e.cod}
+              onMouseDown={() => handleSelect(e)}
+              className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-purple-50 transition-colors text-left border-b border-gray-50 last:border-0"
+            >
+              <div className="flex items-center gap-1 px-2 py-0.5 border border-purple-800 rounded-md text-purple-800 font-bold text-xs shrink-0">
+                <PinoLocalizacao className="h-3" />
+                {e.cod}
+              </div>
+              <span className="truncate text-gray-700 font-medium">
+                {e.desc || e.end}
+              </span>
+            </button>
+          ))}
         </div>
-      </div>
-    </>
+      )}
+    </div>
   )
 }
 

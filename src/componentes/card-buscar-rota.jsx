@@ -1,5 +1,5 @@
 import { useRef, useState, memo, useEffect } from 'react'
-import { Lupa, Onibus, PinoLocalizacao, Seta } from './icons'
+import { Lupa, Onibus, PinoLocalizacao, Seta, Trocar } from './icons'
 import InputParadas, { Results } from './input-paradas'
 import { redirect } from 'react-router-dom'
 
@@ -52,8 +52,10 @@ function CardBuscarRota({ i, d }) {
             setDest(init)
             setInit(a)
           }}
+          className="flex items-center justify-center w-10 h-10 rounded-full border border-gray-300 text-gray-500 hover:bg-purple-50 hover:text-purple-800 hover:border-purple-800 transition-all shrink-0"
+          aria-label="Trocar origem e destino"
         >
-          swap
+          <Trocar className="h-5 w-5" />
         </button>
         <div className="flex flex-row items-center w-full  ">
           <div className="w-full flex flex-col relative">

@@ -20,6 +20,7 @@ import { Link, useNavigate, useSearchParams, useParams} from 'react-router-dom'
 import { Horarios } from '../../componentes/horarios.jsx'
 import {
   Compartilhar,
+  Estrela,
   Fechar,
   Onibus,
   PinoLocalizacao,
@@ -31,6 +32,7 @@ import {
 import { Helmet } from 'react-helmet'
 import Navbar from '../../componentes/navbar.jsx'
 import { useLinhasStore } from '../../stores/linhaStore.js'
+import { useToastStore } from '../../stores/toastStore'
 import { useStops } from '../../hooks/useStops.js'
 
 const parse_paradas = (paradas) => {
@@ -180,13 +182,16 @@ export const StopDetail = () => {
       <Navbar page={'linhas'} />
       <div className="w-full mx-auto text-left max-w-[1200px] ">
         <div className="md:my-4 flex flex-col justify-between gap-4">
-          <h1 className="text-sm font-medium sm:text-xl ">
-            Parada {stop?.desc}
-          </h1>
+          <div className="flex items-center justify-between">
+            <h1 className="text-sm font-medium sm:text-xl ">
+              Parada {stop?.desc}
+            </h1>
+            <FavButtonParada parada={stop} />
+          </div>
           <h2 className='text-xs md:text-sm text-slate-400 mb-4 md:mb-8 sr-only'>
             Consulte previsões de próximos ônibus, linhas que atendem e paradas próximas a { stop?.desc} em Feira de Santana.
           </h2>
-          <div className="flex w-full gap-1 flex-col mb-6 sticky top-0 z-[9999]">
+          <div className="flex w-full gap-1 flex-col mb-6 sticky top-0 z-[99]">
             <div className="">
               <ul className="w-full bg-slate-100 flex flex-row gap-1 px-1 py-2 rounded-sm items-center  text-slate-400 text-sm ">
                 {opcoes.map((p, i) =>
@@ -342,7 +347,7 @@ export const StopDetail = () => {
                 Paradas próximas de {stop?.desc}
                 {paradas_proximas && paradas_proximas.paradas.filter(p => p.cod !== stop.cod).map(p =>
                   <Link to={`/paradas/${p.cod}` }>
-                     <div className="flex flex-row gap-2  ">
+                     <div className="flex flex-row gap-2  border p-2">
                        <div className="flex flex-col items-center">
                          <div
                            className={`flex flex-row items-center justify-center text-center rounded-full text-white w-8 h-8 bg-purple-800`}
@@ -380,6 +385,32 @@ export const StopDetail = () => {
   )
 }
 
+
+const FavButtonParada = ({ parada }) => {
+  const store = useLinhasStore()
+  const notify = useToastStore((s) => s.notify)
+  if (!parada) return null
+  const isFav = store.isFavParada(parada.cod)
+  return (
+    <button
+      onClick={(e) => {
+        e.stopPropagation()
+        const adding = !isFav
+        store.toggleFavParada(parada)
+        notify(
+          adding
+            ? `Parada ${parada.cod} adicionada aos favoritos`
+            : `Parada ${parada.cod} removida dos favoritos`,
+          'success'
+        )
+      }}
+      className={`flex items-center justify-center bg-gray-100 rounded-full p-2 w-10 h-10 aspect-square cursor-pointer hover:bg-gray-200 hover:border hover:border-gray-500 ${isFav ? 'text-yellow-500' : 'text-gray-400'}`}
+      title={isFav ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
+    >
+      <Estrela className={`h-5 w-5 ${isFav ? 'fill-yellow-500' : ''}`} />
+    </button>
+  )
+}
 
 function Location({ lat, long, itinerarioAtivo, paradas_proximas, }) {
   const {

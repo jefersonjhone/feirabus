@@ -9,6 +9,7 @@ import {Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { Estrela, Lupa, Onibus, Seta } from '../../componentes/icons.jsx'
 import { Helmet } from 'react-helmet'
 import {useLinhasStore} from "../../stores/linhaStore"
+import { useToastStore } from '../../stores/toastStore'
 import { useLines } from '../../hooks/useLines'
 
 
@@ -142,11 +143,11 @@ export const Linhas = () => {
         />
       </Helmet>
       <Navbar page={'linhas'} />
-      <div className="w-full mx-auto text-left max-w-[1200px] ">
+      <div className="w-full mx-auto text-left max-w-[1200px] relative z-0">
         <div className="label h-fit">
           <div className="flex flex-col md:flex-row w-full items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-purple-500 pl-2 w-fit">
+              <h1 className="text-3xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-sky-500 to-purple-500 pl-2 w-fit">
                 Linhas
               </h1>
               <h3 className="text-sm text-gray-500 font-medium mb-2 pl-2">
@@ -179,7 +180,7 @@ export const Linhas = () => {
                   id="search"
                   ref={inputRef}
                   onChange={HandleChange}
-                  className={`border border-1 border-gray-200 rounded-md w-full pl-10 pr-4 h-10 text-sm font-medium focus:outline focus:outline-offset-1 focus:outline-gray-300 sticky w-full top-0 mx-auto m-4 shadow-md rounded-md   ${inputRef.current !== null && inputRef.current.value ? 'border-purple-700' : ''}`}
+                  className={`border border-gray-200 rounded-lg w-full pl-10 pr-4 h-10 text-sm font-medium sticky top-0 mx-auto m-4 focus:outline focus:outline-offset-1 focus:outline-gray-300 shadow-sm ${inputRef.current !== null && inputRef.current.value ? 'border-purple-700' : ''}`}
                   placeholder="Pesquisar código ou nome da linha"
                   type="search"
                   maxLength={20}
@@ -188,9 +189,9 @@ export const Linhas = () => {
               {inputRef.current && inputRef.current.value && (
                 <button
                   onClick={HandleDeleteSearch}
-                  className="h-10 px-4 rounded-md border border-2 border-red-500 text-red-500  mr-2"
+                  className="h-10 px-4 rounded-lg border-2 border-red-500 text-red-500 text-sm font-medium whitespace-nowrap"
                 >
-                  delete
+                  limpar
                 </button>
               )}
             </div>
@@ -239,12 +240,32 @@ export const Linhas = () => {
 }
 
 const LineCard = ({ linha, setPage }) => {
+  const isFav = useLinhasStore((s) => s.isFavLinha(linha.sgl))
+  const toggleFav = useLinhasStore((s) => s.toggleFavLinha)
+  const notify = useToastStore((s) => s.notify)
+
   return (
     <>
       <div
         className={`border border-b-1 border-gray-300 min-h-12 md:min-h-16 w-full rounded-lg px-2 md:px-4 border-l-purple-800 border-l-4 border-t-purple-800 border-t-1 `}
       >
         <div className="flex flex-row gap-1 md:gap-2 h-full items-center">
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              const adding = !isFav
+              toggleFav(linha)
+              notify(
+                adding
+                  ? `Linha ${linha.sgl} adicionada aos favoritos`
+                  : `Linha ${linha.sgl} removida dos favoritos`,
+                'success'
+              )
+            }}
+            className={`hidden sm:flex items-center justify-center h-8 w-8 ${isFav ? 'text-yellow-500' : 'text-gray-300 hover:text-yellow-400'}`}
+          >
+            <Estrela className={`h-5 w-5 ${isFav ? 'fill-yellow-500' : ''}`} />
+          </button>
           <div className="p-1 md:px-2 border text-purple-800 border-purple-800 rounded-md text-base  font-bold text-center flex items-center gap-2">
             <span>
               <Onibus className="" />

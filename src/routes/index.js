@@ -11,6 +11,7 @@ import { Linhas } from '../pages/linhas/index'
 import { Veiculos } from '../pages/veiculos.jsx'
 import { Rotas } from '../pages/rotas.jsx'
 import Favoritos from '../pages/favoritos.jsx'
+import ParadasProximas from '../pages/paradas-proximas.jsx'
 import { LineDetail } from '../pages/linhas/linha.id'
 import { Paradas } from '../pages/paradas'
 import { StopDetail } from '../pages/paradas/parada.id'
@@ -35,6 +36,7 @@ export default function AppRoutes() {
         <Route path="/rotas" element={<Rotas />} />
         <Route path="/veiculos" element={<Veiculos />} />
         <Route path="/favoritos" element={<Favoritos />} />
+        <Route path="/paradas-proximas" element={<ParadasProximas />} />
       </Routes>
     </Router>
   )

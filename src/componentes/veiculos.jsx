@@ -1,11 +1,4 @@
-import React, {
-  useMemo,
-  useState,
-  createContext,
-  useEffect,
-  useContext,
-  memo,
-} from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   CircleMarker,
   MapContainer,
@@ -19,18 +12,16 @@ import 'leaflet-ant-path'
 import '../App.css'
 
 import url from '../utils/urls'
-import { HorariosDetail } from '../componentes/HorariosDetail'
 import Navbar from '../componentes/navbar'
 import { useFetch } from '../hooks/useFetch.jsx'
 import { BarLoading } from '../componentes/loading.jsx'
 import Error from '../componentes/error.jsx'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import AntPath from './AntPath.jsx'
+import { Onibus, Seta } from './icons.jsx'
 import {
   BusIconBlue,
-  BusIconBlueTopView,
   SquareIcon,
-  SquareIconSmall,
 } from '../utils/Icons.js'
 
 export function VeiculosCard({ linha }) {
@@ -141,16 +132,12 @@ export function Mapa({ n_itinerario, paradas, linha }) {
   if (prevs) {
     console.log(prevs)
   }
-  if (loading_veiculos) {
-    return <BarLoading />
-  }
-  if (error_veiculos) {
-    return <Error error={error_veiculos} imagesrc={'./explorar.png'} />
-  }
+  const hasVeiculos = veiculos?.veiculos?.length > 0
+
   let paths = []
   let rotation = 0
   itinerarios.forEach((o, i) => {
-    if (veiculos && veiculos.veiculos && veiculos.veiculos.length > 0) {
+    if (hasVeiculos) {
       let distX = veiculos.veiculos[0].lat - o.coordY
       let distY = o.coordX - veiculos.veiculos[0].long
       const max_dist = 0.0005
@@ -162,22 +149,56 @@ export function Mapa({ n_itinerario, paradas, linha }) {
 
   return (
     <>
-      <div className="rounded-md overflow-hidden w-full h-full md:p-4">
-        <p className="text-sm font-medium">
-          {prevs.length > 0 && last && (
-            <h3>
-              previsao de chegada em <b>{last.desc}</b>:{' '}
+      <div className="rounded-md overflow-hidden w-full h-full md:p-4 flex flex-col">
+        {loading_veiculos && (
+          <div className="flex items-center justify-center gap-2 py-2 text-sm text-gray-400 bg-gray-50 rounded-md mb-2">
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-purple-600 border-t-transparent" />
+            Buscando veículos em tempo real...
+          </div>
+        )}
+        {error_veiculos && (
+          <div className="flex items-center justify-center gap-2 py-2 text-sm text-red-400 bg-red-50 rounded-md mb-2">
+            Erro ao carregar veículos
+          </div>
+        )}
+        {!loading_veiculos && !error_veiculos && veiculos && veiculos.veiculos && veiculos.veiculos.length === 0 && (
+          <div className="flex items-center justify-center gap-2 py-2 text-sm text-gray-400 bg-gray-50 rounded-md mb-2">
+            <Onibus className="h-4 w-4" />
+            Nenhum veículo encontrado neste itinerário no momento
+          </div>
+        )}
+        {hasVeiculos && prevs.length > 0 && last && (
+          <div className="mb-2 px-1">
+            <p className="text-xs font-medium text-gray-500 mb-1">
+              Previsão de chegada em <b className="text-gray-700">{last.desc}</b>
+            </p>
+            <div className="flex flex-col gap-1">
               {prevs.map((p) => (
-                <p>
-                  Veículo <span className="">{p.numVeicGestor}</span>:{' '}
-                  <i>
-                    <b>{p.prev}</b>
-                  </i>
-                </p>
+                <div
+                  key={p.numVeicGestor}
+                  className="flex items-center justify-between px-2 py-1 shadow-sm rounded-md border text-xs transition-all hover:shadow-md"
+                >
+                  <div className="flex items-center gap-2">
+                    <div className="flex gap-1 p-1 items-center justify-center rounded-md text-violet-700 border-2 border-violet-700 font-bold">
+                      <Onibus className="h-3" />
+                      {p.sgLin}
+                    </div>
+                    <div>
+                      <div className="font-semibold text-xs">{p.apelidoLinha}</div>
+                      <div className="flex items-center gap-1 text-xs text-gray-500">
+                        <Onibus className="h-3" />
+                        Veículo {p.numVeicGestor}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-xs bg-emerald-200/40 px-2 py-1 rounded-md text-emerald-700 font-medium text-nowrap">
+                    {p.prev}
+                  </div>
+                </div>
               ))}
-            </h3>
-          )}
-        </p>
+            </div>
+          </div>
+        )}
         <MapContainer
           className="rounded-md shadow-md"
           center={[-12.254463237869844, -38.960094451904304]}

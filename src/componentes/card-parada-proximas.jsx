@@ -80,7 +80,7 @@ export default function CardParadasProximas() {
                 <PinoLocalizacao className="h-4  text-blue-600" />
               </span>
               <p
-                className="tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-indigo-500"
+                className="tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-sky-500 to-indigo-500"
                 href="/explorar"
               >
                 Explorar
