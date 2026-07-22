@@ -19,7 +19,6 @@ export function Rota({
   useEffect(() => {
     if (Rotas[numItinerario] !== undefined) return
     if (numItinerario === undefined) return
-    console.log(numItinerario)
     fetch(`itinerarios/${numItinerario}`)
       .then((e) => e.json())
       .then(setRota)

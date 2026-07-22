@@ -4,25 +4,40 @@ export function useFetch(uri) {
   const [data, setData] = useState(undefined)
   const [error, setError] = useState()
   const [loading, setLoading] = useState(true)
+
   useEffect(() => {
     if (!uri) return
-    fetch(uri)
-      .then(async (data) => {
-        if (!data.ok) {
-          const errorBody = await data.json()
+
+    const controller = new AbortController()
+
+    setLoading(true)
+    setData(undefined)
+    setError(undefined)
+
+    fetch(uri, { signal: controller.signal })
+      .then(async (res) => {
+        if (!res.ok) {
+          const body = await res.json()
           throw new Error(
             JSON.stringify({
-              status: data.status,
-              message: errorBody,
+              status: res.status,
+              message: body,
             })
           )
         }
-        return data.json()
+        return res.json()
       })
       .then(setData)
       .finally(() => setLoading(false))
-      .catch((e) => setError(JSON.parse(e.message)))
+      .catch((e) => {
+        if (e.name !== 'AbortError') {
+          setError(JSON.parse(e.message))
+        }
+      })
+
+    return () => controller.abort()
   }, [uri])
+
   return {
     loading,
     data,

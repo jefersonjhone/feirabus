@@ -113,7 +113,7 @@ export function Previsoes({
   const divRef = useRef()
   const [itinerario__, setItinerario__] = useState(undefined)
   const [prevVeic, setPrevVeic] = useState({})
-  console.log(itinerario__)
+
   const fetchContent = (ApiEndPoint) => {
     fetch(ApiEndPoint)
       .then((e) => e.json())
@@ -146,10 +146,6 @@ export function Previsoes({
   const handleClickPrevVeic = (e) => {
     setItinerario__(e)
   }
-  const handleCLickProximos = () => {
-    alert(currentBusStop.cod)
-  }
-
   const previsoes_ = () => {
     if (prevVeic.previsoes === undefined) {
       return null
@@ -160,14 +156,7 @@ export function Previsoes({
         itinerario__ !== undefined &&
         itinerario__.codItinerario !== undefined
       ) {
-        console.log(
-          'listando previsoes: ',
-          prevVeic.previsoes[e].codItinerario.toString() ===
-            itinerario__.codItinerario.toString()
-        )
       } else if (Object.keys(prevVeic.previsoes).length > 0) {
-        console.log('setando o ativo como o primeiro')
-        //setItinerario__(ProximosOnibus.previsoes[0])
       }
 
       if (

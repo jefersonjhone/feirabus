@@ -3,8 +3,6 @@ import {
   MapContainer,
   TileLayer,
   Marker,
-  CircleMarker,
-  useMap,
   Popup,
 } from 'react-leaflet'
 import { SquareIcon, BusStopIconOrangeSmall } from '../utils/Icons.js'
@@ -12,7 +10,6 @@ import 'leaflet/dist/leaflet.css'
 import AntPath from './AntPath.jsx'
 import 'leaflet-ant-path'
 import url from '../utils/urls.js'
-import navbar from './navbar'
 import { useSearchParams } from 'react-router-dom'
 
 export default function Map() {
@@ -114,7 +111,6 @@ export default function Map() {
         const responses = await Promise.all(
           rotas[rotaAtiva].map(async (item) => {
             const linha = item.linha.num_linha
-            console.log('linha ->', linha, codItinearios, codItinearios[linha])
             let itinerarios = codItinearios[linha]
             if (
               itinerarios === undefined ||

@@ -50,7 +50,6 @@ export const Linhas = () => {
       const line_param = lines.filter((l) => l.sgl === params.get('linha'))
       if (line_param) {
         handleSetPage(line_param[0], 1)
-        console.log('set param')
       }
     }
   })
@@ -285,7 +284,8 @@ const LineCard = ({ linha, setPage }) => {
                 adding
               )
             }}
-            className={`flex items-center justify-center h-8 w-8 sm:h-8 sm:w-8 shrink-0 ${isFav ? 'text-yellow-500' : 'text-gray-300 hover:text-yellow-400'}`}
+            className={`flex items-center justify-center h-11 w-11 shrink-0 ${isFav ? 'text-yellow-500' : 'text-gray-300 hover:text-yellow-400'}`}
+            aria-label={isFav ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
           >
             <Star weight={isFav ? 'fill' : 'regular'} className={`h-5 w-5 ${isFav ? 'text-yellow-500' : ''}`} />
           </button>

@@ -170,10 +170,14 @@ export const LineDetail = () => {
 
         <div className="w-full h-fit md:min-h-[60vh] m-auto rounded-xl bg-white">
           <div className="flex flex-col gap-1 mb-4 sticky top-0 z-10 bg-white">
-            <div className="flex gap-2 bg-gray-100 rounded-xl h-11 p-1 px-2">
+            <div className="flex gap-2 bg-gray-100 rounded-xl h-11 p-1 px-2" role="tablist" aria-label="Detalhes da linha">
               {opcoes.map((p, i) =>
                 <button
                   key={i}
+                  role="tab"
+                  aria-selected={i === page}
+                  aria-controls={`tabpanel-${i}`}
+                  id={`tab-${i}`}
                   className={`flex items-center justify-center gap-2 h-full flex-1 rounded-lg text-sm font-medium transition-colors duration-150 active:scale-[0.97] ${
                     i === page
                       ? 'bg-purple-800 text-white shadow-sm'
@@ -251,7 +255,7 @@ export const LineDetail = () => {
 
                 <div className="rounded-lg h-full">
                   {page === 0 && paradas && paradas[directions[saida]] !== undefined && (
-                    <div>
+                    <div role="tabpanel" id="tabpanel-0" aria-labelledby="tab-0">
                       <h3 className="flex items-center font-medium mb-3 md:mb-4 px-1">
                         Paradas
                         <span className="bg-gray-300 text-xs px-1.5 py-0.5 rounded-full ml-2 text-gray-700 font-medium">
@@ -272,17 +276,23 @@ export const LineDetail = () => {
 
                   {page === 1 ? (
                     error_itinerarios ? (
-                      <Error error={error_itinerarios} imagesrc="./explorar.png" />
+                      <div role="tabpanel" id="tabpanel-1" aria-labelledby="tab-1">
+                        <Error error={error_itinerarios} imagesrc="./explorar.png" />
+                      </div>
                     ) : (
-                      <Rotas
-                        n_itinerario={codItinerarios?.itinerarios?.[directions[saida]]}
-                        paradas={paradas[directions[saida]]}
-                      />
+                      <div role="tabpanel" id="tabpanel-1" aria-labelledby="tab-1">
+                        <Rotas
+                          n_itinerario={codItinerarios?.itinerarios?.[directions[saida]]}
+                          paradas={paradas[directions[saida]]}
+                        />
+                      </div>
                     )
                   ) : null}
 
                   {page === 2 && (
-                    <Horarios props={{ line, handle_exit, directions, saida, setSaida }} />
+                    <div role="tabpanel" id="tabpanel-2" aria-labelledby="tab-2">
+                      <Horarios props={{ line, handle_exit, directions, saida, setSaida }} />
+                    </div>
                   )}
                 </div>
               </div>

@@ -12,8 +12,6 @@ export function Veiculos({
   previsao,
 }) {
   const prev = useNextBus(numItinerario)
-  console.log('updating bus -> ', numItinerario)
-  console.log(prev)
   useEffect(() => {}, [prev])
 
   const veiculos = () => {

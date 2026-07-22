@@ -38,7 +38,6 @@ export default function Mapa() {
     error: location_error,
     loading: loading_location,
   } = useGeolocation()
-  console.log(location)
   return (
     <div className="map-component">
       <div className="relative w-screen h-screen overflow-y-hidden">
@@ -77,7 +76,6 @@ export function MapComponents() {
 
   const setHistorico = useContext(historicoContext)
 
-  console.log('rerendering -> mapcomponents')
   useEffect(() => {
     if (isEmpty(currentPoint)) return
     fetch(url + `/paradas-proximas/${currentPoint.lng}/${currentPoint.lat}`)
@@ -91,7 +89,6 @@ export function MapComponents() {
       pontosProximos.paradas === undefined ||
       isEmpty(pontosProximos.paradas)
     ) {
-      console.log('não há paradas próximas')
       return
     }
     if (

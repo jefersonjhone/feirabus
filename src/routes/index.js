@@ -2,11 +2,6 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import Home from '../pages/home'
 import Map from '../componentes/map'
 import Mapa from '../pages/map.jsx'
-//import Favoritos from './componentes/Favoritos/Favoritos';
-//import PesquisarPorLinha from './componentes/Search/PesquisarPorLinha';
-//import './App.css';
-//import Acompanhar from './componentes/Acompanhar/Acompanhar';
-//import CalcularRota from './componentes/CalcularRota.jsx';
 import { Linhas } from '../pages/linhas/index'
 import { Veiculos } from '../pages/veiculos.jsx'
 import { Rotas } from '../pages/rotas.jsx'

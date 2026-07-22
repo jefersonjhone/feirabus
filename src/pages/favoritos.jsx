@@ -106,7 +106,8 @@ export default function Favoritos() {
                         <div className="font-medium text-sm md:text-base truncate w-full">{parada.desc}</div>
                         <button
                           onClick={(e) => { e.stopPropagation(); e.preventDefault(); toggleFavParada(parada); notify(`Parada ${parada.cod} removida dos favoritos`, 'info') }}
-                          className="flex items-center justify-center h-8 w-8 shrink-0 text-yellow-500 hover:text-yellow-600"
+                          className="flex items-center justify-center h-11 w-11 shrink-0 text-yellow-500 hover:text-yellow-600"
+                          aria-label="Remover dos favoritos"
                         >
                           <Star weight="fill" className="h-5 w-5 text-yellow-500" />
                         </button>
@@ -149,7 +150,8 @@ export default function Favoritos() {
                         <div className="font-medium text-sm md:text-base truncate w-full">{linha.nom}</div>
                         <button
                           onClick={(e) => { e.stopPropagation(); e.preventDefault(); toggleFavLinha(linha); notify(`Linha ${linha.sgl} removida dos favoritos`, 'info') }}
-                          className="flex items-center justify-center h-8 w-8 shrink-0 text-yellow-500 hover:text-yellow-600"
+                          className="flex items-center justify-center h-11 w-11 shrink-0 text-yellow-500 hover:text-yellow-600"
+                          aria-label="Remover dos favoritos"
                         >
                           <Star weight="fill" className="h-5 w-5 text-yellow-500" />
                         </button>

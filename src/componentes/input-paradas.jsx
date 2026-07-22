@@ -141,7 +141,6 @@ const LabelLinha = (cod) => {
 }
 
 const location_label = (p, hasline) => {
-  console.log(p)
   return (
     <div className="flex flex-row gap-2 ">
       <div className="flex flex-row items-center">

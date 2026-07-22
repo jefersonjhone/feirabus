@@ -35,7 +35,7 @@ function CardBuscarRota({ i, d, showMap = true }) {
     fetch(`${process.env.REACT_APP_API_URL}/rotas/${init.cod}/${dest.cod}/${tsm}`)
       .then((e) => e.json())
       .then((e) => handleFetch(e))
-      .catch((e) => console.log(e))
+      .catch((e) => {})
   }
 
   const handleFetch = (data) => {

@@ -134,10 +134,14 @@ export const StopDetail = () => {
         )}
 
         <div className="flex flex-col gap-1 mb-4 sticky top-0 z-10 bg-white">
-          <div className="flex gap-2 bg-gray-100 rounded-xl h-11 p-1">
+          <div className="flex gap-2 bg-gray-100 rounded-xl h-11 p-1" role="tablist" aria-label="Detalhes da parada">
             {opcoes.map((p, i) =>
               <button
                 key={i}
+                role="tab"
+                aria-selected={i === page}
+                aria-controls={`tabpanel-${i}`}
+                id={`tab-${i}`}
                 className={`flex items-center justify-center gap-1 h-full flex-1 rounded-lg text-xs sm:text-sm font-medium transition-all ${
                   i === page ? 'bg-purple-800 text-white shadow-sm' : 'text-gray-500 hover:text-purple-800'
                 }`}
@@ -163,7 +167,7 @@ export const StopDetail = () => {
           Atualizado {previsoes?.horaConsulta || '...'}
         </div>
 
-        <section className={`flex flex-col gap-3 ${page === 0 ? '' : 'hidden'}`}>
+        <section role="tabpanel" id="tabpanel-0" aria-labelledby="tab-0" className={`flex flex-col gap-3 ${page === 0 ? '' : 'hidden'}`}>
           <h3 className="text-sm font-semibold text-slate-700 px-1">Próximos ônibus</h3>
           {loadingPrevisoes ? (
             <BarLoading />
@@ -204,7 +208,7 @@ export const StopDetail = () => {
           )}
         </section>
 
-        <section id="linhas-que-atendem" className={`flex flex-col gap-3 ${page === 1 ? '' : 'hidden'}`}>
+        <section id="tabpanel-1" role="tabpanel" aria-labelledby="tab-1" className={`flex flex-col gap-3 ${page === 1 ? '' : 'hidden'}`}>
           <h3 className="text-sm font-semibold text-slate-700 px-1">Linhas que atendem</h3>
           {loadingLinhas ? (
             <BarLoading />
@@ -236,7 +240,7 @@ export const StopDetail = () => {
           })()}
         </section>
 
-        <section id="paradas-proximas" className={`flex flex-col gap-3 ${page === 2 ? '' : 'hidden'}`}>
+        <section id="tabpanel-2" role="tabpanel" aria-labelledby="tab-2" className={`flex flex-col gap-3 ${page === 2 ? '' : 'hidden'}`}>
           <h3 className="text-sm font-semibold text-slate-700 px-1">Paradas próximas</h3>
           {loadingProximas ? (
             <BarLoading />

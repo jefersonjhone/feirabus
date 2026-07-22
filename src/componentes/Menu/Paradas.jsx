@@ -2,7 +2,6 @@ import { useState, useRef, useEffect, createRef, memo } from 'react'
 import { scrollToElement } from '../../utils/Transitions'
 
 const CardLinha = ({ parada, localAtivo, handleCLickParada }) => {
-  console.log('card linha -> ', parada)
   return (
     <div
       active={(localAtivo.cod === parada.cod).toString()}
@@ -103,7 +102,6 @@ export default function Paradas({
 
   useEffect(() => {
     scrollToElement(divRef.current)
-    return () => console.log('saindo -> ', localAtivo.cod)
   }, [])
 
   const handleCLickParada = (e) => {

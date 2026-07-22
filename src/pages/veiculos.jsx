@@ -262,7 +262,8 @@ const LineCardVeiculo = ({ linha, setPage, index = 0 }) => {
                 adding
               )
             }}
-            className={`flex items-center justify-center h-8 w-8 shrink-0 ${isFav ? 'text-yellow-500' : 'text-gray-300 hover:text-yellow-400'}`}
+            className={`flex items-center justify-center h-11 w-11 shrink-0 ${isFav ? 'text-yellow-500' : 'text-gray-300 hover:text-yellow-400'}`}
+            aria-label={isFav ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
           >
             <Star weight={isFav ? 'fill' : 'regular'} className={`h-5 w-5 ${isFav ? 'text-yellow-500' : ''}`} />
           </button>

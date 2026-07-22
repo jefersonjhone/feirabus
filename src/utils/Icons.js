@@ -35,25 +35,11 @@ export const MarkerPurpleIcon = L.icon({
   iconAnchor: [11, 22],
 })
 
-export const BusIcon = L.icon({
-  iconUrl: '/Pesquisar por linha.png',
-  iconSize: [28, 28],
-  iconAnchor: [14, 14],
-})
-
 export const BusIconBlue = L.icon({
   iconUrl: '/bus_blue.png',
   iconSize: [28, 28],
   iconAnchor: [14, 14],
 })
-
-export const BusIconBlueTopView = (img) => L.icon({
-  //iconUrl: '/bus_top_view_blue.png',
-  iconUrl: img,
-  iconSize: [30, 60],
-  iconAnchor: [15, 25],
-})
-
 
 export const BusIconGray = L.icon({
   iconUrl: '/bus_gray.png',
