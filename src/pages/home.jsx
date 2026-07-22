@@ -98,12 +98,13 @@ export default function Home() {
 
         <div className="max-w-[1200px] mx-auto px-4 py-24 space-y-32">
             <AcessoRapido />
-            <AnimatePresence>
-              {isInstallable && <InstallPrompt onInstall={install} onDismiss={dismiss} isIOS={isIOS} />}
-            </AnimatePresence>
+            
             <LinhasPopulares />
             <CardSaidasTerminal />
             <CardRedeTerminais />
+            <AnimatePresence>
+                          {isInstallable && <InstallPrompt onInstall={install} onDismiss={dismiss} isIOS={isIOS} />}
+                        </AnimatePresence>
             <Footer />
         </div>
       </div>

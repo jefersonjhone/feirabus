@@ -17,6 +17,7 @@ import { BarLoading } from '../componentes/loading.jsx'
 import { Link } from 'react-router-dom'
 import AntPath from './AntPath.jsx'
 import { Bus, ArrowClockwise } from '@phosphor-icons/react'
+import { trackEvent } from '../utils/analytics'
 import {
   BusIconBlue,
   SquareIcon,
@@ -270,7 +271,11 @@ const Mapa = memo(({ itinerarios, paradas, veiculos, nItinerario }) => {
         {paradas?.filter(p => p.y && p.x).map(p => (
           <Marker key={p.cod} icon={BusStopIconOrangeSmall} opacity={0.8} position={[p.y, p.x]}>
             <Popup>
-              <Link to={`/paradas/${p.cod}`} className="text-sm font-medium text-purple-700 hover:underline">{p.desc || p.end}</Link>
+              <Link
+                to={`/paradas/${p.cod}`}
+                onClick={() => trackEvent('clicar_parada_mapa', { id: p.cod, page: window.location.pathname })}
+                className="text-sm font-medium text-purple-700 hover:underline"
+              >{p.desc || p.end}</Link>
             </Popup>
           </Marker>
         ))}

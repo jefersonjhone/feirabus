@@ -394,7 +394,11 @@ function Rotas({ n_itinerario, paradas }) {
             .map((p) => (
               <Marker key={p.cod} icon={BusStopIconOrangeSmall} opacity={1} position={[p.y, p.x]}>
                 <Popup>
-                  <Link to={`/paradas/${p.cod}`} className="flex items-center gap-1.5 text-sm font-medium text-gray-800 hover:text-purple-700">
+                  <Link
+                    to={`/paradas/${p.cod}`}
+                    onClick={() => trackEvent('clicar_parada_mapa', { id: p.cod, page: window.location.pathname })}
+                    className="flex items-center gap-1.5 text-sm font-medium text-gray-800 hover:text-purple-700"
+                  >
                     {p.desc || p.end}
                     <ArrowUpRight className="h-3.5 w-3.5 text-gray-400" />
                   </Link>

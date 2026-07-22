@@ -15,6 +15,7 @@ import ParadasProximas from '../pages/paradas-proximas.jsx'
 import { LineDetail } from '../pages/linhas/linha.id'
 import { Paradas } from '../pages/paradas'
 import { StopDetail } from '../pages/paradas/parada.id'
+import NotFound from '../pages/not-found'
 import Toast from '../componentes/toast'
 import FeedbackModal from '../componentes/feedback-modal'
 
@@ -34,6 +35,7 @@ export default function AppRoutes() {
         <Route path="/veiculos" element={<Veiculos />} />
         <Route path="/favoritos" element={<Favoritos />} />
         <Route path="/paradas-proximas" element={<ParadasProximas />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <Toast />
       <FeedbackModal />

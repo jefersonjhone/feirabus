@@ -1,6 +1,7 @@
 import { useFetch } from '../hooks/useFetch'
 import { useGeolocation } from '../hooks/useGeolocation'
 import { MapPin } from '@phosphor-icons/react'
+import { Link } from 'react-router-dom'
 
 export default function CardParadasProximas() {
   /*
@@ -71,21 +72,19 @@ export default function CardParadasProximas() {
             ))}
 
           <div className="p-4 ">
-            <a
-              variant="outline"
+            <Link
+              to="/explorar"
               className="w-full flex items-center justify-center border rounded-md font-medium py-2 gap-2"
-              href="/explorar"
             >
               <span>
                 <MapPin className="h-4  text-blue-600" />
               </span>
               <p
                 className="tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-sky-500 to-indigo-500"
-                href="/explorar"
               >
                 Explorar
               </p>
-            </a>
+            </Link>
           </div>
         </div>
       </div>

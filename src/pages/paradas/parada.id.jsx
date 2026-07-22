@@ -314,7 +314,11 @@ function Location({ lat, long, itinerarioAtivo, paradas_proximas }) {
         {paradas_proximas?.map(p =>
           <Marker key={p.cod} icon={MarkerPurpleIcon} position={[p.y, p.x]}>
             <Popup>
-              <Link to={`/paradas/${p.cod}`} className="text-sm font-medium text-purple-800 hover:underline">{p.desc}</Link>
+              <Link
+                to={`/paradas/${p.cod}`}
+                onClick={() => trackEvent('clicar_parada_mapa', { id: p.cod, page: window.location.pathname })}
+                className="text-sm font-medium text-purple-800 hover:underline"
+              >{p.desc}</Link>
             </Popup>
           </Marker>
         )}

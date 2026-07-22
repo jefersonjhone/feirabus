@@ -60,7 +60,7 @@ export const Horarios = ({ props }) => {
         />
         <link
         rel="canonical"
-        href={`feirabus.vercel.app/linhas?linha=${line.sgl}&tab=Horários`}
+        href={`https://feirabus.vercel.app/linhas?linha=${line.sgl}&tab=Horários`}
         />
 
         <meta
