@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, useCallback, useRef, memo } from 'react'
 import {
   CircleMarker,
   MapContainer,
@@ -12,19 +12,53 @@ import 'leaflet-ant-path'
 import '../App.css'
 
 import url from '../utils/urls'
-import Navbar from '../componentes/navbar'
 import { useFetch } from '../hooks/useFetch.jsx'
 import { BarLoading } from '../componentes/loading.jsx'
-import Error from '../componentes/error.jsx'
 import { Link } from 'react-router-dom'
 import AntPath from './AntPath.jsx'
-import { Onibus, Seta } from './icons.jsx'
+import { Bus, ArrowClockwise } from '@phosphor-icons/react'
 import {
   BusIconBlue,
   SquareIcon,
+  BusStopIconOrangeSmall,
 } from '../utils/Icons.js'
 
+function usePoll(fn, intervalMs, deps = []) {
+  const [data, setData] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [lastUpdate, setLastUpdate] = useState(null)
+  const savedCb = useRef()
+
+  useEffect(() => { savedCb.current = fn }, [fn])
+
+  const fetchNow = useCallback(() => {
+    setLoading(true)
+    Promise.resolve(savedCb.current())
+      .then((res) => {
+        setData(res)
+        setError(null)
+        setLastUpdate(Date.now())
+      })
+      .catch((err) => { setError(err) })
+      .finally(() => setLoading(false))
+  }, deps)
+
+  useEffect(() => {
+    fetchNow()
+    if (intervalMs) {
+      const id = setInterval(fetchNow, intervalMs)
+      return () => clearInterval(id)
+    }
+  }, [fetchNow, intervalMs])
+
+  return { data, loading, error, lastUpdate, refetch: fetchNow }
+}
+
 export function VeiculosCard({ linha }) {
+  const [saida, setSaida] = useState(0)
+  const [timeAgo, setTimeAgo] = useState(0)
+
   const {
     loading: loading_itinerarios,
     data: codItinerarios,
@@ -35,237 +69,230 @@ export function VeiculosCard({ linha }) {
     data: paradas,
     error: error_paradas,
   } = useFetch(url + `/linhas/${linha.cod}/paradas/coordenadas`)
-  const [saida, setSaida] = useState(0)
+
   const directions = codItinerarios
     ? Object.keys(codItinerarios['itinerarios'])
     : []
-  if (loading_itinerarios) {
-    return <>loading...</>
+
+  const nItinerario = codItinerarios?.itinerarios?.[directions[saida]]?.[0]
+  const paradasList = paradas?.[directions[saida]]
+
+  const veicPoll = usePoll(
+    () => fetch(url + `/itinerarios/${nItinerario}/veiculos`).then(r => r.json()),
+    (nItinerario ? 15000 : null), [nItinerario]
+  )
+
+  const lastParada = paradasList?.length > 0 ? paradasList[paradasList.length - 1] : null
+
+  const prevPoll = usePoll(
+    () => lastParada ? fetch(url + `/paradas/${lastParada.cod}/previsoes`).then(r => r.json()) : Promise.resolve(null),
+    (nItinerario && lastParada) ? 15000 : null, [nItinerario, lastParada?.cod]
+  )
+
+  const { data: itinerarioAtivo } = useFetch(
+    nItinerario ? url + `/itinerarios/${nItinerario}` : null
+  )
+
+  useEffect(() => {
+    if (!veicPoll.lastUpdate) return
+    const id = setInterval(() => {
+      setTimeAgo(Math.floor((Date.now() - veicPoll.lastUpdate) / 1000))
+    }, 1000)
+    return () => clearInterval(id)
+  }, [veicPoll.lastUpdate])
+
+  const handleRefresh = () => {
+    veicPoll.refetch()
   }
-  if (error_itinerarios) {
-    return <>error...</>
-  }
+
+  if (loading_itinerarios) return <BarLoading />
+  if (error_itinerarios) return <BarLoading />
+
   return (
-    <div className="w-full h-full flex flex-col mx-auto ">
-      <div className="border border-slate-200 px-2 py-1 rounded-sm text-sm">
-        <h4 className="font-medium text-center">SAÍDA</h4>
-        <ul className="w-full bg-slate-100 flex flex-row gap-2 p-1 rounded-sm items-center font-medium text-slate-500 leading-4">
-          {directions.map((p, i) =>
-            i === saida ? (
-              <li className="bg-purple-800 p-1 rounded-md w-1/2 text-center text-white font-medium ">
-                {p}
-              </li>
-            ) : (
-              <li
-                className="p-1 rounded-md w-1/2 text-center cursor-pointer hover:cursor-pointer hover:border hover:border-purple-800 hover:text-purple-800 hover:border-purple-800 hover:text-purple-800"
-                onClick={() => {
-                  setSaida(i)
-                }}
-              >
-                {p}
-              </li>
-            )
-          )}
-        </ul>
+    <div className="w-full h-full flex flex-col mx-auto">
+      <div className="flex flex-col gap-1 mb-3">
+        <p className="text-[11px] font-medium text-gray-500 text-center">SAÍDA</p>
+        <div className="flex gap-2 bg-gray-100 rounded-xl h-11 p-1">
+          {directions.map((p, i) => (
+            <button key={i}
+              className={`flex items-center justify-center flex-1 rounded-lg text-sm font-medium transition-colors ${
+                i === saida ? 'bg-purple-800 text-white shadow-sm' : 'text-gray-500 hover:text-purple-800'
+              }`}
+              onClick={() => setSaida(i)}
+            >{p}</button>
+          ))}
+        </div>
       </div>
-      <div className="w-full h-full ">
-        {paradas !== undefined && (
-          <Mapa
-            n_itinerario={codItinerarios.itinerarios[directions[saida]][0]}
-            paradas={paradas[directions[saida]]}
-            linha={linha}
-          />
+
+      <div className="flex items-center justify-between mb-2 px-1">
+        <div className="flex items-center gap-2 text-[11px] text-gray-400">
+          {veicPoll.lastUpdate ? (
+            <span className="flex items-center gap-1">
+              <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+              Atualizado há {timeAgo}s
+            </span>
+          ) : (
+            <span className="flex items-center gap-1">
+              <span className="h-1.5 w-1.5 rounded-full bg-gray-300" />
+              Aguardando dados...
+            </span>
+          )}
+          <span className="text-gray-300">·</span>
+          <span>Auto 15s</span>
+        </div>
+        <button
+          onClick={handleRefresh}
+          disabled={veicPoll.lastUpdate && Date.now() - veicPoll.lastUpdate < 15000}
+          className="flex items-center gap-1 text-xs font-medium text-purple-700 hover:text-purple-900 disabled:text-gray-300 disabled:cursor-not-allowed transition-colors"
+        >
+          <ArrowClockwise className={`h-3.5 w-3.5 ${veicPoll.loading ? 'animate-spin' : ''}`} />
+          Atualizar
+        </button>
+      </div>
+
+      <div className="rounded-md overflow-hidden w-full flex-1 flex flex-col">
+        {veicPoll.loading && !veicPoll.data && (
+          <div className="flex items-center justify-center gap-2 py-2 text-xs text-gray-400 bg-gray-50 rounded-md mb-2">
+            <div className="h-3 w-3 animate-spin rounded-full border-2 border-purple-600 border-t-transparent" />
+            Buscando veículos...
+          </div>
         )}
+        {veicPoll.error && (
+          <div className="flex items-center justify-center gap-2 py-2 text-xs text-red-400 bg-red-50 rounded-md mb-2">Erro ao carregar veículos</div>
+        )}
+        {!veicPoll.loading && !veicPoll.error && veicPoll.data?.veiculos?.length === 0 && (
+          <div className="flex items-center justify-center gap-2 py-2 text-xs text-gray-400 bg-gray-50 rounded-md mb-2">
+            <Bus className="h-3.5 w-3.5" /> Nenhum veículo neste itinerário no momento
+          </div>
+        )}
+
+        {veicPoll.data?.veiculos?.length > 0 && prevPoll.data?.previsoes && lastParada && (
+          <div className="mb-2">
+            <p className="text-[11px] font-medium text-gray-500 mb-1">
+              Previsão em <b className="text-gray-700">{lastParada.desc}</b>
+            </p>
+            <div className="flex flex-col gap-1">
+              {prevPoll.data.previsoes
+                .filter((p) => veicPoll.data.veiculos.some((v) => v.numVeicGestor === p.numVeicGestor))
+                .map((p) => (
+                  <div key={p.numVeicGestor} className="flex items-center justify-between px-2 py-1 shadow-sm rounded-md border text-xs">
+                    <div className="flex items-center gap-2">
+                      <div className="flex gap-1 p-1 items-center justify-center rounded-md text-purple-700 border border-purple-200 font-bold">
+                        <Bus className="h-3" /> {p.sgLin}
+                      </div>
+                      <div>
+                        <div className="font-semibold text-xs">{p.apelidoLinha}</div>
+                        <div className="flex items-center gap-1 text-xs text-gray-500"><Bus className="h-3" /> Veículo {p.numVeicGestor}</div>
+                      </div>
+                    </div>
+                    <div className="text-xs bg-emerald-200/40 px-2 py-1 rounded-md text-emerald-700 font-medium text-nowrap">{p.prev}</div>
+                  </div>
+                ))}
+            </div>
+          </div>
+        )}
+
+        <div className="flex-1 rounded-md overflow-hidden border border-gray-200">
+          <Mapa
+            itinerarios={itinerarioAtivo?.itinerarios || []}
+            paradas={paradasList}
+            veiculos={veicPoll.data?.veiculos || []}
+            nItinerario={nItinerario}
+          />
+        </div>
       </div>
     </div>
   )
 }
 
-export function Mapa({ n_itinerario, paradas, linha }) {
-  const apiurl_veiculos = url + `/itinerarios/${n_itinerario}/veiculos`
-  const apiurl_itinerario = url + `/itinerarios/${n_itinerario}`
-  const {
-    loading_veiculos,
-    data: veiculos,
-    error: error_veiculos,
-  } = useFetch(apiurl_veiculos)
-  const {
-    loading: loading_itinerario,
-    data: itinerarioAtivo,
-    error: error_itinerario,
-  } = useFetch(apiurl_itinerario)
-  let last =
-    paradas && veiculos && veiculos.veiculos && veiculos.veiculos.length > 0
-      ? paradas[paradas.length - 1]
-      : null
-  const apiurl_previsoes = last ? url + `/paradas/${last.cod}/previsoes` : null
-  const {
-    loading: loading_prev,
-    data: previsoes,
-    errorr: error_prev,
-  } = useFetch(apiurl_previsoes)
-  const itinerarios =
-    itinerarioAtivo && itinerarioAtivo.itinerarios
-      ? itinerarioAtivo.itinerarios
-      : []
-
-  let prevs = []
-
-  console.log(
-    previsoes !== undefined
-      ? previsoes.previsoes
-          .filter((p) => p.sgLin === linha.sgl)
-          .filter(
-            (p) =>
-              p.numVeicGestor in veiculos.veiculos.map((v) => v.numVeicGestor)
-          )
-      : ''
-  )
-  if (veiculos && previsoes) {
-    let veics = veiculos.veiculos.map((v) => v.numVeicGestor)
-    veics.map((v) => {
-      prevs.push(...previsoes.previsoes.filter((p) => p.numVeicGestor === v))
-    })
-  }
-
-  console.log(previsoes, veiculos)
-  if (prevs) {
-    console.log(prevs)
-  }
-  const hasVeiculos = veiculos?.veiculos?.length > 0
-
-  let paths = []
-  let rotation = 0
-  itinerarios.forEach((o, i) => {
-    if (hasVeiculos) {
-      let distX = veiculos.veiculos[0].lat - o.coordY
-      let distY = o.coordX - veiculos.veiculos[0].long
-      const max_dist = 0.0005
-      if (Math.abs(distX) < max_dist && Math.abs(distY) < max_dist) {
-        paths = [itinerarios.slice(0, i), itinerarios.slice(i)]
+function FlyToVehicle({ veiculos }) {
+  const map = useMap()
+  useEffect(() => {
+    if (veiculos.length > 0 && veiculos[0]?.lat && veiculos[0]?.long) {
+      const lat = parseFloat(veiculos[0].lat)
+      const lng = parseFloat(veiculos[0].long)
+      if (!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) {
+        map.whenReady(() => {
+          setTimeout(() => {
+            map.invalidateSize()
+            map.flyTo([lat, lng], 15, { duration: 1.5 })
+          }, 100)
+        })
       }
     }
-  })
+  }, [veiculos])
+  return null
+}
+
+const Mapa = memo(({ itinerarios, paradas, veiculos, nItinerario }) => {
+  const { data: itinerarioAtivo } = useFetch(
+    nItinerario ? url + `/itinerarios/${nItinerario}` : null
+  )
+
+  const fullItinerarios = itinerarioAtivo?.itinerarios || itinerarios
+
+  const paths = useMemo(() => {
+    const result = []
+    if (veiculos.length > 0 && fullItinerarios.length > 0) {
+      fullItinerarios.forEach((o, i) => {
+        const distX = Math.abs(veiculos[0].lat - o.coordY)
+        const distY = Math.abs(o.coordX - veiculos[0].long)
+        if (distX < 0.0005 && distY < 0.0005) {
+          result.push(fullItinerarios.slice(0, i))
+          result.push(fullItinerarios.slice(i))
+        }
+      })
+    }
+    return result
+  }, [fullItinerarios, veiculos])
+
+  const hasVeiculos = veiculos.length > 0
+  const antDelay = 8000
 
   return (
-    <>
-      <div className="rounded-md overflow-hidden w-full h-full md:p-4 flex flex-col">
-        {loading_veiculos && (
-          <div className="flex items-center justify-center gap-2 py-2 text-sm text-gray-400 bg-gray-50 rounded-md mb-2">
-            <div className="h-4 w-4 animate-spin rounded-full border-2 border-purple-600 border-t-transparent" />
-            Buscando veículos em tempo real...
-          </div>
-        )}
-        {error_veiculos && (
-          <div className="flex items-center justify-center gap-2 py-2 text-sm text-red-400 bg-red-50 rounded-md mb-2">
-            Erro ao carregar veículos
-          </div>
-        )}
-        {!loading_veiculos && !error_veiculos && veiculos && veiculos.veiculos && veiculos.veiculos.length === 0 && (
-          <div className="flex items-center justify-center gap-2 py-2 text-sm text-gray-400 bg-gray-50 rounded-md mb-2">
-            <Onibus className="h-4 w-4" />
-            Nenhum veículo encontrado neste itinerário no momento
-          </div>
-        )}
-        {hasVeiculos && prevs.length > 0 && last && (
-          <div className="mb-2 px-1">
-            <p className="text-xs font-medium text-gray-500 mb-1">
-              Previsão de chegada em <b className="text-gray-700">{last.desc}</b>
-            </p>
-            <div className="flex flex-col gap-1">
-              {prevs.map((p) => (
-                <div
-                  key={p.numVeicGestor}
-                  className="flex items-center justify-between px-2 py-1 shadow-sm rounded-md border text-xs transition-all hover:shadow-md"
-                >
-                  <div className="flex items-center gap-2">
-                    <div className="flex gap-1 p-1 items-center justify-center rounded-md text-violet-700 border-2 border-violet-700 font-bold">
-                      <Onibus className="h-3" />
-                      {p.sgLin}
-                    </div>
-                    <div>
-                      <div className="font-semibold text-xs">{p.apelidoLinha}</div>
-                      <div className="flex items-center gap-1 text-xs text-gray-500">
-                        <Onibus className="h-3" />
-                        Veículo {p.numVeicGestor}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="text-xs bg-emerald-200/40 px-2 py-1 rounded-md text-emerald-700 font-medium text-nowrap">
-                    {p.prev}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-        <MapContainer
-          className="rounded-md shadow-md"
-          center={[-12.254463237869844, -38.960094451904304]}
-          zoom={13}
-          style={{ height: '100%', width: '100%' }}
-        >
-          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+    <MapContainer className="w-full rounded-md shadow-md" center={[-12.2544, -38.9601]} zoom={13} scrollWheelZoom={true} style={{ height: '350px', minHeight: '350px' }}>
+      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+      <FlyToItinerario itinerarios={fullItinerarios} veiculos={veiculos} />
+      <FlyToVehicle veiculos={veiculos} />
+      <>
+        {veiculos.map((v) => (
+          <Marker key={v.numVeicGestor} icon={BusIconBlue} position={[v.lat, v.long]} />
+        ))}
+        {fullItinerarios.length > 0 && (
           <>
-            {veiculos &&
-              veiculos.veiculos &&
-              veiculos.veiculos.map((v) => (
-                <div className="transform -rotate-45">
-                  <Marker
-                    className=""
-                    icon={BusIconBlue}
-                    position={[v.lat, v.long]}
-                  />
-                </div>
-              ))}
-            {itinerarioAtivo && itinerarioAtivo.itinerarios && (
-              <>
-                <AntPath
-                  positions={itinerarios.map((o) => [o.coordY, o.coordX])}
-                  options={{
-                    delay: 2000,
-                    dashArray: [10, 20],
-                    weight: 5,
-                    color: '#000',
-                    opacity: 1,
-                    hardwareAccelerated: true,
-                  }}
-                />
-
-                {paths.map((p, i) => {
-                  return (
-                    <AntPath
-                      positions={p.map((o) => [o.coordY, o.coordX])}
-                      options={{
-                        delay: 2000,
-                        dashArray: [10, 20],
-                        weight: 5,
-                        color: i === 0 ? '#ddddff' : '#0000dd',
-                        opacity: 1,
-                        hardwareAccelerated: true,
-                      }}
-                    />
-                  )
-                })}
-
-                <Marker
-                  icon={SquareIcon}
-                  position={[
-                    itinerarios[itinerarios.length - 1].coordY,
-                    itinerarios[itinerarios.length - 1].coordX,
-                  ]}
-                />
-
-                <CircleMarker
-                  pathOptions={{ color: 'black' }}
-                  radius={8}
-                  center={[itinerarios[0].coordY, itinerarios[0].coordX]}
-                />
-              </>
-            )}
+            <AntPath positions={fullItinerarios.map(o => [o.coordY, o.coordX])} options={{ delay: antDelay, dashArray: [10, 20], weight: 5, color: hasVeiculos ? '#ddd' : '#000', opacity: 1, hardwareAccelerated: true }} />
+            {hasVeiculos && paths[0] && <AntPath positions={paths[0].map(o => [o.coordY, o.coordX])} options={{ delay: antDelay, dashArray: [10, 20], weight: 5, color: '#ddd', opacity: 1, hardwareAccelerated: true }} />}
+            {hasVeiculos && paths[1] && <AntPath positions={paths[1].map(o => [o.coordY, o.coordX])} options={{ delay: antDelay, dashArray: [10, 20], weight: 5, color: '#0000dd', opacity: 1, hardwareAccelerated: true }} />}
+            <Marker icon={SquareIcon} position={[fullItinerarios[fullItinerarios.length - 1].coordY, fullItinerarios[fullItinerarios.length - 1].coordX]} />
+            <CircleMarker pathOptions={{ color: '#374151' }} radius={8} center={[fullItinerarios[0].coordY, fullItinerarios[0].coordX]} />
           </>
-        </MapContainer>
-      </div>
-    </>
+        )}
+        {paradas?.filter(p => p.y && p.x).map(p => (
+          <Marker key={p.cod} icon={BusStopIconOrangeSmall} opacity={0.8} position={[p.y, p.x]}>
+            <Popup>
+              <Link to={`/paradas/${p.cod}`} className="text-sm font-medium text-purple-700 hover:underline">{p.desc || p.end}</Link>
+            </Popup>
+          </Marker>
+        ))}
+      </>
+    </MapContainer>
   )
+})
+
+function FlyToItinerario({ itinerarios, veiculos }) {
+  const map = useMap()
+  useEffect(() => {
+    if (itinerarios.length === 0) return
+    if (veiculos.length > 0 && veiculos[0]?.lat) return
+    const bounds = itinerarios.map((o) => [o.coordY, o.coordX])
+    map.whenReady(() => {
+      setTimeout(() => {
+        map.invalidateSize()
+        map.fitBounds(bounds, { padding: [40, 40] })
+      }, 100)
+    })
+  }, [itinerarios, veiculos])
+  return null
 }
+
+export { Mapa }

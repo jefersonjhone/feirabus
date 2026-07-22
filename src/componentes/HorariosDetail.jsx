@@ -166,7 +166,7 @@ export const HorariosDetail = ({ props }) => {
       {loading ? (
         <BarLoading />
       ) : error ? (
-        <Error error={error} imagesrc={'./explorar.png'} />
+        <Error error={error} imagesrc="./explorar.png" />
       ) : (
         <div className="flex gap-1 flex-col text-sm leading-4">
           <div className="border border-slate-200 p-2 rounded-lg">

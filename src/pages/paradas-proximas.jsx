@@ -10,7 +10,7 @@ import { useFetch } from '../hooks/useFetch'
 import { useGeolocation } from '../hooks/useGeolocation'
 import { BarLoading } from '../componentes/loading'
 import Error from '../componentes/error'
-import { PinoLocalizacao, Seta } from '../componentes/icons'
+import { MapPin, CaretRight } from '@phosphor-icons/react'
 import {
   MarkerPurpleIcon,
   ParadaIconSelected,
@@ -70,7 +70,7 @@ export default function ParadasProximas() {
           content="Encontre paradas de ônibus próximas à sua localização em Feira de Santana."
         />
       </Helmet>
-      <Navbar page={'paradas'} />
+      <Navbar page="paradas" />
       <div className="w-full mx-auto text-left max-w-[1200px] px-2 relative z-0">
         <div className="label h-fit">
           <h1 className="text-3xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-sky-500 to-purple-500 pl-2 w-fit">
@@ -87,7 +87,7 @@ export default function ParadasProximas() {
           <BarLoading />
         ) : locError ? (
           <div className="flex flex-col items-center justify-center py-16 gap-4 text-gray-400">
-            <PinoLocalizacao className="h-12 w-12" />
+            <MapPin className="h-12 w-12" />
             <p className="text-base font-medium">
               Não foi possível obter sua localização
             </p>
@@ -134,10 +134,10 @@ export default function ParadasProximas() {
             {loadingParadas ? (
               <BarLoading />
             ) : errorParadas ? (
-              <Error error={errorParadas} imagesrc={'./explorar.png'} />
+              <Error error={errorParadas} imagesrc="./explorar.png" />
             ) : stops.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 gap-4 text-gray-400">
-                <PinoLocalizacao className="h-12 w-12" />
+                <MapPin className="h-12 w-12" />
                 <p className="text-base font-medium">
                   Nenhuma parada encontrada nas proximidades
                 </p>
@@ -160,7 +160,7 @@ export default function ParadasProximas() {
                   >
                     <div className="flex flex-row gap-1 md:gap-2 h-full items-center">
                       <div className="p-1 md:px-2 border text-purple-800 border-purple-800 rounded-md text-base font-bold text-center flex items-center gap-2">
-                        <PinoLocalizacao />
+                        <MapPin />
                         {p.cod}
                       </div>
                       <div className="font-medium text-sm md:text-base truncate w-full">
@@ -171,7 +171,7 @@ export default function ParadasProximas() {
                         className="flex items-center justify-center h-8 min-w-16 bg-purple-800 px-2 rounded-md text-white font-semibold leading-4 text-xs"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        Detalhes <Seta className="h-4" />
+                        Detalhes <CaretRight className="h-4" />
                       </Link>
                     </div>
                   </div>

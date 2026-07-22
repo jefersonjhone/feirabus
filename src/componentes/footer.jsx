@@ -1,155 +1,136 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { motion, AnimatePresence } from 'motion/react'
+import { Download, X, ShareFat } from '@phosphor-icons/react'
+
+function getIsIOS() {
+  return /iPhone|iPad|iPod/.test(navigator.userAgent) && !window.MSStream
+}
 
 export default function Footer() {
+  const [canInstall, setCanInstall] = useState(false)
+  const [isIOS, setIsIOS] = useState(false)
+  const [showIOSGuide, setShowIOSGuide] = useState(false)
+
+  useEffect(() => {
+    const ios = getIsIOS()
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+    const isIOSStandalone = navigator.standalone === true
+
+    setIsIOS(ios)
+
+    if (isStandalone || isIOSStandalone) return
+
+    if (ios) {
+      setCanInstall(true)
+      return
+    }
+
+    const handler = (e) => {
+      e.preventDefault()
+      window._deferredInstallPrompt = e
+      setCanInstall(true)
+    }
+    window.addEventListener('beforeinstallprompt', handler)
+    return () => window.removeEventListener('beforeinstallprompt', handler)
+  }, [])
+
+  const handleInstall = async () => {
+    const prompt = window._deferredInstallPrompt
+    if (!prompt) return
+    prompt.prompt()
+    await prompt.userChoice
+    window._deferredInstallPrompt = null
+    setCanInstall(false)
+  }
+
   return (
-    <footer className="border-t bg-white">
-      <div className="container px-4 py-8 md:py-12">
+    <motion.footer
+      initial={{ opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-40px' }}
+      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      className="border-t border-gray-100 bg-white"
+    >
+      <div className="max-w-[1200px] mx-auto px-4 py-10 md:py-14">
         <div className="grid gap-8 md:grid-cols-3">
           <div>
             <div className="flex items-center gap-2">
-              <img
-                src="./logo_feirabus.png"
-                className="h-6 w-6 text-blue-600"
-                alt="feirabus logo"
-              />
-              <h3 className="text-xl font-bold text-blue-600">FeiraBus</h3>
+              <img src="./logo_feirabus.png" className="h-6 w-6" alt="FeiraBus" />
+              <h3 className="text-lg font-semibold text-slate-900">FeiraBus</h3>
             </div>
-            <p className="mt-4 text-sm text-slate-600">
-              Providing reliable public transportation services to connect
-              communities and enhance mobility for all.
+            <p className="mt-3 text-sm text-slate-500 leading-relaxed">
+              Seu guia completo do transporte público de Feira de Santana. Linhas, horários,
+              paradas e localização em tempo real.
             </p>
-            <div className="mt-4 flex gap-4">
-              <a href="#" className="text-slate-400 hover:text-blue-600">
-                <span className="sr-only">Facebook</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-5 w-5"
-                >
-                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-                </svg>
-              </a>
-              <a href="#" className="text-slate-400 hover:text-blue-600">
-                <span className="sr-only">Twitter</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-5 w-5"
-                >
-                  <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" />
-                </svg>
-              </a>
-              <a href="#" className="text-slate-400 hover:text-blue-600">
-                <span className="sr-only">Instagram</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-5 w-5"
-                >
-                  <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
-                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                  <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
-                </svg>
-              </a>
-            </div>
           </div>
           <div>
-            <h3 className="mb-4 font-semibold"> Links</h3>
+            <h3 className="text-sm font-semibold text-slate-800 mb-3">Links</h3>
             <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="/" className="text-slate-600 hover:text-blue-600">
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/rotas"
-                  className="text-slate-600 hover:text-blue-600"
-                >
-                  Rotas & Horários
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/tarifas"
-                  className="text-slate-600 hover:text-blue-600"
-                >
-                  Tarifas
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/explorar"
-                  className="text-slate-600 hover:text-blue-600"
-                >
-                  Explorar
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/favoritos"
-                  className="text-slate-600 hover:text-blue-600"
-                >
-                  Favoritos
-                </Link>
-              </li>
+              <li><Link to="/" className="text-slate-500 hover:text-purple-700 transition-colors duration-200">Home</Link></li>
+              <li><Link to="/linhas" className="text-slate-500 hover:text-purple-700 transition-colors duration-200">Linhas</Link></li>
+              <li><Link to="/veiculos" className="text-slate-500 hover:text-purple-700 transition-colors duration-200">Veículos</Link></li>
+              <li><Link to="/paradas" className="text-slate-500 hover:text-purple-700 transition-colors duration-200">Paradas</Link></li>
+              <li><Link to="/favoritos" className="text-slate-500 hover:text-purple-700 transition-colors duration-200">Favoritos</Link></li>
             </ul>
           </div>
           <div>
-            <h3 className="mb-4 font-semibold"> Serviços</h3>
+            <h3 className="text-sm font-semibold text-slate-800 mb-3">Serviços</h3>
             <ul className="space-y-2 text-sm">
-              <li>
-                <Link
-                  href="/contact"
-                  className="text-slate-600 hover:text-blue-600"
-                >
-                  Entrar em contato
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/faq"
-                  className="text-slate-600 hover:text-blue-600"
-                >
-                  FAQ
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/lost-found"
-                  className="text-slate-600 hover:text-blue-600"
-                >
-                  Avisos e Reclamações
-                </Link>
-              </li>
+              <li><Link to="/rotas" className="text-slate-500 hover:text-purple-700 transition-colors duration-200">Planejar rota</Link></li>
+              <li><Link to="/paradas-proximas" className="text-slate-500 hover:text-purple-700 transition-colors duration-200">Paradas próximas</Link></li>
+              <li><Link to="/favoritos" className="text-slate-500 hover:text-purple-700 transition-colors duration-200">Favoritos</Link></li>
+              {canInstall && (
+                <li>
+                  {isIOS ? (
+                    <div className="relative">
+                      <button
+                        onClick={() => setShowIOSGuide(!showIOSGuide)}
+                        className="flex items-center gap-1.5 text-slate-500 hover:text-purple-700 transition-colors duration-200"
+                      >
+                        <ShareFat className="h-3.5 w-3.5" />
+                        Como instalar
+                      </button>
+                      <AnimatePresence>
+                        {showIOSGuide && (
+                          <motion.div
+                            initial={{ opacity: 0, y: -4 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -4 }}
+                            transition={{ duration: 0.2 }}
+                            className="absolute bottom-full left-0 mb-2 w-64 p-3 bg-white border border-gray-200 rounded-lg shadow-lg z-50"
+                          >
+                            <button
+                              onClick={() => setShowIOSGuide(false)}
+                              className="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
+                            >
+                              <X className="h-3 w-3" />
+                            </button>
+                            <p className="text-xs text-slate-600 leading-relaxed pr-4">
+                              No Safari, toque no ícone de <span className="font-semibold">compartilhar</span> ↓ e selecione <span className="font-semibold">"Adicionar à Tela de Início"</span>.
+                            </p>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={handleInstall}
+                      className="flex items-center gap-1.5 text-slate-500 hover:text-purple-700 transition-colors duration-200"
+                    >
+                      <Download className="h-3.5 w-3.5" />
+                      Instalar app
+                    </button>
+                  )}
+                </li>
+              )}
             </ul>
           </div>
         </div>
-        <div className="mt-8 border-t pt-6 text-center text-sm text-slate-500">
-          <p>© {new Date().getUTCFullYear()} FeiraBus. All rights reserved.</p>
+        <div className="mt-10 pt-6 border-t border-gray-100 text-center text-xs text-slate-400">
+          <p>© {new Date().getUTCFullYear()} FeiraBus. Todos os direitos reservados.</p>
         </div>
       </div>
-    </footer>
+    </motion.footer>
   )
 }

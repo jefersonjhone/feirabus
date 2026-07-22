@@ -47,7 +47,7 @@ export const Horarios = ({ props }) => {
 
   return (
     <div
-      className=" w-full overflow-scroll bg-white opacity-100 z-20 mt-4"
+      className=" w-full overflow-y-auto bg-white opacity-100 z-20 mt-4"
       onClick={(e) => e.stopPropagation()}
     >
       <Helmet>
@@ -92,7 +92,7 @@ export const Horarios = ({ props }) => {
       {loading ? (
         <BarLoading />
       ) : error ? (
-        <Error error={error} imagesrc={'./explorar.png'} />
+        <Error error={error} imagesrc="./explorar.png" />
       ) : (
         <div className="flex flex-col text-sm leading-4 gap-4 ">
           <div className=" border-slate-200 rounded-sm flex flex-col gap-1 p-1">
@@ -121,13 +121,13 @@ export const Horarios = ({ props }) => {
               Quadro de Horários da linha {line.sgl}
             </h3>
             {horarios !== undefined && (
-              <div className=" flex-wrap gap-2 p-1 border border-1 rounded-sm max-h-full overflow-scroll">
+              <div className="flex-wrap gap-2 p-1 border rounded-sm max-h-full overflow-y-auto">
                 <div className='text-blue-900 flex flex-col'>
                   <p className='w-full flex items-center gap-2 text-xs'>
                     <span className=' w-2 h-2  bg-blue-900 rounded-full '></span>
                     MANHÃ:
                   </p>
-                  <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 flex-wrap gap-2 p-1 rounded-sm max-h-full overflow-scroll">
+                  <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2 rounded-sm max-h-full overflow-y-auto">
                     {quadro_horarios.filter(o => o < "12:00").map(
                       hor => 
                       <h3
@@ -144,7 +144,7 @@ export const Horarios = ({ props }) => {
                     <span className=' w-2 h-2  bg-orange-900 rounded-full '></span>
                     TARDE:
                   </p>
-                  <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 flex-wrap gap-2 p-1 rounded-sm max-h-full overflow-scroll">
+                  <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2 rounded-sm max-h-full overflow-y-auto">
                     {quadro_horarios.filter(o => "12:00" < o && o < "18:00").map(
                       hor=> <h3
                         className="text-center bg-orange-200 border border-2 border-slate-100
@@ -164,7 +164,7 @@ export const Horarios = ({ props }) => {
                     <span className=' w-2 h-2  bg-purple-900 rounded-full '></span>
                     NOITE:
                   </p>
-                  <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 flex-wrap gap-2 p-1  max-h-full overflow-scroll">
+                  <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 flex-wrap gap-2 p-1  max-h-full overflow-y-auto">
                     {quadro_horarios.filter(o => "18:00" < o).map(hor => 
                       <h3
                         className="text-center bg-purple-100 border border-2 border-slate-200

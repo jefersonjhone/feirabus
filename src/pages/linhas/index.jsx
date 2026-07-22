@@ -1,16 +1,18 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { LineDetail } from './linha.id'
 import Navbar from '../../componentes/navbar'
 import url from '../../utils/urls.js'
-import { useFetch } from '../../hooks/useFetch.jsx'
 import Error from '../../componentes/error.jsx'
-import { BarLoading } from '../../componentes/loading.jsx'
-import {Link, useNavigate, useSearchParams } from 'react-router-dom'
-import { Estrela, Lupa, Onibus, Seta } from '../../componentes/icons.jsx'
+import { SkeletonList } from '../../componentes/skeleton.jsx'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { Star, X, MagnifyingGlass, Bus, CaretRight } from '@phosphor-icons/react'
 import { Helmet } from 'react-helmet'
+import { motion, useReducedMotion } from 'motion/react'
+import EmptyState from '../../componentes/empty-state.jsx'
 import {useLinhasStore} from "../../stores/linhaStore"
 import { useToastStore } from '../../stores/toastStore'
 import { useLines } from '../../hooks/useLines'
+import { trackEvent } from '../../utils/analytics'
 
 
 export const Linhas = () => {
@@ -26,8 +28,20 @@ export const Linhas = () => {
     error,
   } = useLines();
   const lines = Object.values(lines_obj)
+  const favoritosLinhas = useLinhasStore((s) => s.favoritosLinhas)
+  const favSet = new Set(favoritosLinhas.map(f => f.sgl))
 
-  
+  const filteredLines = useMemo(() => {
+    if (!lines || lines.length === 0) return []
+    const base = search === null ? lines : lines.filter((li) => li.sgl.includes(search) || li.nom.includes(search))
+    return [...base].sort((a, b) => {
+      const aFav = favSet.has(a.sgl) ? 0 : 1
+      const bFav = favSet.has(b.sgl) ? 0 : 1
+      if (aFav !== bFav) return aFav - bFav
+      return a.sgl.localeCompare(b.sgl)
+    })
+  }, [lines, search, favoritosLinhas])
+
   const tab = params.get('tab')
   useEffect(() => {
     if (!params.get('linha')) return
@@ -47,6 +61,8 @@ export const Linhas = () => {
   }
   const HandleChange = () => {
     SetSearch(inputRef.current.value.toUpperCase().trim())
+    trackEvent('buscar', { type: 'linha', term: inputRef.current.value.toUpperCase().trim() })
+    document.getElementById('linhas-list')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
   const HandleDeleteSearch = () => {
@@ -56,13 +72,14 @@ export const Linhas = () => {
   if (error) {
     return (
       <>
-        <Navbar page={'linhas'} />
-        <Error error={error} imagesrc={'./explorar.png'} />
+        <Navbar page="linhas" />
+        <Error error={error} imagesrc="./explorar.png" />
       </>
     )
   }
 
   const handleOpen = (line, page) => {
+    trackEvent('navegar_detalhe', { type: 'linha', id: line.sgl })
     navigate(`/linhas/${line.sgl}`)
     handleSetPage(line, page)
   }
@@ -142,62 +159,57 @@ export const Linhas = () => {
           content="https://feirabus.vercel.app/logo_feirabus.png"
         />
       </Helmet>
-      <Navbar page={'linhas'} />
+      <Navbar page="linhas" />
       <div className="w-full mx-auto text-left max-w-[1200px] relative z-0">
-        <div className="label h-fit">
-          <div className="flex flex-col md:flex-row w-full items-center justify-between">
+        <div className="px-4 pt-4 md:pt-6 pb-2">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate(-1)}
+              className="flex items-center justify-center w-8 h-8 rounded-lg text-gray-500 hover:text-purple-700 hover:bg-purple-50 transition-colors -ml-1"
+              aria-label="Voltar"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            </button>
             <div>
-              <h1 className="text-3xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-sky-500 to-purple-500 pl-2 w-fit">
+              <h1 className="text-xl sm:text-2xl font-bold text-slate-900">
                 Linhas
               </h1>
-              <h3 className="text-sm text-gray-500 font-medium mb-2 pl-2">
+              <h3 className="text-xs md:text-sm text-slate-500 mt-0.5">
               Consulte todas as linhas de ônibus de Feira de Santana, incluindo
-              itinerários, horários, pontos de parada e informações atualizadas
-              sobre o transporte público da cidade.
+              itinerários, horários e pontos de parada.
               </h3>
-         
-            </div>
-            <div
-              style={{ transition: 'all 1s' }}
-              className="flex flex-row items-center gap-2 sticky bg-white top-0 z-10 w-full md:w-1/2 px-2 md:px-8 md:min-h-12 md:mt-8 md:mb-8 rounded-md"
-            >
-              <label
-                htmlFor={'search'}
-                className={`${
-                  inputRef.current !== null && inputRef.current.value
-                    ? 'z-10 bg-white top-2 absolute ml-4 mdd:inset-x-1/4 text-xs font-semilight text-purple-800 font-medium w-fit mb-2 px-1'
-                    : 'hidden'
-                }`}
-              >
-                Pesquisar código ou nome da linha
-              </label>
-              <div className="relative w-full">
-                <span className="absolute pl-3 text-gray-400 h-full flex items-center z-30">
-                  <Lupa />
-                </span>
-                <input
-                  name="search"
-                  id="search"
-                  ref={inputRef}
-                  onChange={HandleChange}
-                  className={`border border-gray-200 rounded-lg w-full pl-10 pr-4 h-10 text-sm font-medium sticky top-0 mx-auto m-4 focus:outline focus:outline-offset-1 focus:outline-gray-300 shadow-sm ${inputRef.current !== null && inputRef.current.value ? 'border-purple-700' : ''}`}
-                  placeholder="Pesquisar código ou nome da linha"
-                  type="search"
-                  maxLength={20}
-                ></input>
-              </div>
-              {inputRef.current && inputRef.current.value && (
-                <button
-                  onClick={HandleDeleteSearch}
-                  className="h-10 px-4 rounded-lg border-2 border-red-500 text-red-500 text-sm font-medium whitespace-nowrap"
-                >
-                  limpar
-                </button>
-              )}
             </div>
           </div>
         </div>
-        {loading ? <BarLoading /> : <></>}
+
+        <div className="sticky top-0 z-10 bg-white px-4 pt-3 pb-3">
+          <div className="relative w-full">
+            <span className="absolute pl-3 text-gray-500 h-full flex items-center z-10">
+              <MagnifyingGlass />
+            </span>
+            <input
+              name="search"
+              id="search"
+              ref={inputRef}
+              onChange={HandleChange}
+                  className={`border border-gray-200 rounded-lg w-full pl-10 pr-10 h-11 text-sm font-medium focus:outline-none focus:shadow-md shadow-sm transition-all ${inputRef.current?.value ? 'border-purple-700 shadow-purple-50' : ''}`}
+                  style={{ fontSize: 16 }}
+                  placeholder="Pesquisar código ou nome da linha"
+              type="search"
+              maxLength={20}
+            />
+            {inputRef.current && inputRef.current.value && (
+              <button
+                onClick={HandleDeleteSearch}
+                className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center w-6 h-6 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-500 transition-colors z-10"
+                aria-label="Limpar pesquisa"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            )}
+          </div>
+        </div>
+        {loading ? <SkeletonList count={6} /> : <></>}
         {page !== 0 && (
           <div
             className="h-[100dvh] w-screen z-10 absolute opacity-70 bg-slate-800 left-0 top-0"
@@ -205,34 +217,36 @@ export const Linhas = () => {
           ></div>
         )}
 
-        <div className="flex flex-row flex-wrap gap-2 px-2 max-h-screen overflow-y-scroll">
+        <div id="linhas-list" className="flex flex-col gap-2 px-2 mt-4 md:mt-12">
+          {!loading && search !== null && filteredLines.length > 0 && (
+            <p className="text-sm text-gray-500 px-1 pb-1">
+              {filteredLines.length} linha(s) encontrada(s)
+            </p>
+          )}
+
+          {!loading && search !== null && filteredLines.length === 0 && (
+            <EmptyState
+              icon={<MagnifyingGlass className="h-6 w-6" />}
+              title="Nenhuma linha encontrada"
+              description={`Nenhum resultado para "${search}". Tente outro código ou nome.`}
+            />
+          )}
+
           {page === 1 && (
-            <div className="h-[100dvh] w-screen absolute left-0 top-0 flex flex-col items-center justify-end md:justify-center pb-4">
+            <div className="h-[100dvh] w-screen fixed inset-0 z-40 flex flex-col items-center justify-end md:justify-center pb-4">
               <LineDetail line={line} handle_exit={handle_exit} tab={tab} />
             </div>
           )}
 
           {lines !== undefined &&
             lines.length > 0 &&
-            (search !== null
-              ? lines
-                  .filter(
-                    (li) => li.sgl.includes(search) || li.nom.includes(search)
-                  )
-                  .map((linha) => (
-                    <LineCard
-                      key={linha.code}
-                      linha={linha}
-                      setPage={handleOpen}
-                    />
-                  ))
-              : lines.map((linha) => (
-                  <LineCard
-                    key={linha.cod}
-                    linha={linha}
-                    setPage={handleOpen}
-                  />
-                )))}
+            filteredLines.map((linha) => (
+              <LineCard
+                key={linha.cod}
+                linha={linha}
+                setPage={handleOpen}
+              />
+            ))}
         </div>
       </div>
     </>
@@ -243,54 +257,50 @@ const LineCard = ({ linha, setPage }) => {
   const isFav = useLinhasStore((s) => s.isFavLinha(linha.sgl))
   const toggleFav = useLinhasStore((s) => s.toggleFavLinha)
   const notify = useToastStore((s) => s.notify)
+  const reduced = useReducedMotion()
 
   return (
-    <>
+    <motion.div
+      initial={reduced ? {} : { opacity: 0, y: 12 }}
+      whileInView={reduced ? {} : { opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-40px' }}
+      transition={{ duration: 0.3, ease: 'easeOut' }}
+    >
       <div
-        className={`border border-b-1 border-gray-300 min-h-12 md:min-h-16 w-full rounded-lg px-2 md:px-4 border-l-purple-800 border-l-4 border-t-purple-800 border-t-1 `}
+        onClick={() => setPage(linha)}
+        className={`border border-gray-200 min-h-14 md:min-h-[4.5rem] w-full rounded-lg px-3 md:px-5 py-2 shadow-sm hover:shadow-md transition-shadow cursor-pointer active:bg-purple-50/30`}
       >
-        <div className="flex flex-row gap-1 md:gap-2 h-full items-center">
+        <div className="flex flex-row gap-2 md:gap-3 h-full items-center">
           <button
             onClick={(e) => {
               e.stopPropagation()
               const adding = !isFav
               toggleFav(linha)
+              trackEvent('favoritar', { action: adding ? 'add' : 'remove', type: 'linha', id: linha.sgl })
               notify(
                 adding
                   ? `Linha ${linha.sgl} adicionada aos favoritos`
                   : `Linha ${linha.sgl} removida dos favoritos`,
-                'success'
+                adding ? 'success' : 'info',
+                adding
               )
             }}
-            className={`hidden sm:flex items-center justify-center h-8 w-8 ${isFav ? 'text-yellow-500' : 'text-gray-300 hover:text-yellow-400'}`}
+            className={`flex items-center justify-center h-8 w-8 sm:h-8 sm:w-8 shrink-0 ${isFav ? 'text-yellow-500' : 'text-gray-300 hover:text-yellow-400'}`}
           >
-            <Estrela className={`h-5 w-5 ${isFav ? 'fill-yellow-500' : ''}`} />
+            <Star weight={isFav ? 'fill' : 'regular'} className={`h-5 w-5 ${isFav ? 'text-yellow-500' : ''}`} />
           </button>
-          <div className="p-1 md:px-2 border text-purple-800 border-purple-800 rounded-md text-base  font-bold text-center flex items-center gap-2">
+          <div className="p-1 md:px-2 border text-purple-700 border-purple-200 rounded-md text-base font-bold text-center flex items-center gap-2 shrink-0">
             <span>
-              <Onibus className="" />
+              <Bus className="h-5 w-5" />
             </span>
             {linha.sgl}
           </div>
           <div className="font-medium text-sm md:text-base truncate w-full">
             {linha.nom}
           </div>
-          <div className=" flex items-center justify-center h-8 min-w-16 w-1/6 overflow-hidden">
-            <button
-              className=" h-full bg-purple-800 px-2 md:py-1 rounded-md text-white font-semibold leading-4 text-xs flex flex-col md:flex-row items-center "
-              onClick={() => {
-                setPage(linha, 1)
-              }}
-            >
-              Detalhes{' '}
-              <span className="">
-                {' '}
-                <Seta className="h-4" />
-              </span>
-            </button>
-          </div>
+          <CaretRight className="h-5 w-5 text-gray-400 shrink-0" />
         </div>
       </div>
-    </>
+    </motion.div>
   )
 }

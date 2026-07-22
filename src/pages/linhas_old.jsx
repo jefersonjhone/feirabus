@@ -132,8 +132,8 @@ export const Rotas = () => {
   if (error) {
     return (
       <>
-        <Navbar page={'linhas'} />
-        <Error error={error} imagesrc={'./explorar.png'} />
+        <Navbar page="linhas" />
+        <Error error={error} imagesrc="./explorar.png" />
       </>
     )
   }
@@ -160,7 +160,7 @@ export const Rotas = () => {
 
   return (
     <>
-      <Navbar page={'linhas'} />
+      <Navbar page="linhas" />
       <div className="w-full mx-auto text-left max-w-[1200px] ">
         <div className="label h-fit">
           <div className="flex flex-row w-full items-center justify-center">

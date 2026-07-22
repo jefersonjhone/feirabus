@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
@@ -9,11 +9,14 @@ import url from '../../utils/urls.js'
 import { useFetch } from '../../hooks/useFetch.jsx'
 import { useGeolocation } from '../../hooks/useGeolocation'
 import Error from '../../componentes/error.jsx'
-import { BarLoading } from '../../componentes/loading.jsx'
-import { Estrela, Lupa, PinoLocalizacao, Seta } from '../../componentes/icons.jsx'
+import { SkeletonList } from '../../componentes/skeleton.jsx'
+import EmptyState from '../../componentes/empty-state.jsx'
+import { motion, useReducedMotion } from 'motion/react'
+import { Star, X, MagnifyingGlass, MapPin, CaretRight } from '@phosphor-icons/react'
 import { useLinhasStore } from '../../stores/linhaStore'
 import { useToastStore } from '../../stores/toastStore'
 import { useStops } from '../../hooks/useStops'
+import { trackEvent } from '../../utils/analytics'
 import {
   MarkerPurpleIcon,
   ParadaIconSelected,
@@ -70,12 +73,20 @@ export const Paradas = () => {
     error,
   } = useStops()
 
+  const filteredStops = useMemo(() => {
+    if (!paradas || Object.keys(paradas).length === 0) return []
+    if (!search) return []
+    const q = search.toUpperCase()
+    return Object.values(paradas).filter((p) => (p.desc?.toUpperCase().includes(q)) || (p.end?.toUpperCase().includes(q))).slice(0, 30)
+  }, [paradas, search])
+
   useEffect(() => {
     if (name) inputRef.current.value = name
   }, [name])
 
   const HandleChange = () => {
     SetSearch(inputRef.current.value.toUpperCase().trim())
+    trackEvent('buscar', { type: 'parada', term: inputRef.current.value.toUpperCase().trim() })
   }
 
   const HandleDeleteSearch = () => {
@@ -86,13 +97,14 @@ export const Paradas = () => {
   if (error) {
     return (
       <>
-        <Navbar page={'paradas'} />
-        <Error error={error} imagesrc={'./explorar.png'} />
+        <Navbar page="paradas" />
+        <Error error={error} imagesrc="./explorar.png" />
       </>
     )
   }
 
   const handleOpen = (stop) => {
+    trackEvent('navegar_detalhe', { type: 'parada', id: stop.cod })
     navigate(`/paradas/${stop.cod}`)
   }
 
@@ -123,15 +135,26 @@ export const Paradas = () => {
         <meta name="author" content="FeiraBus" />
       </Helmet>
 
-      <Navbar page={'paradas'} />
+      <Navbar page="paradas" />
       <div className="w-full mx-auto text-left max-w-[1200px] px-2 relative z-0">
-        <div className="mb-3">
-          <h1 className="text-3xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-sky-500 to-purple-500 pl-2 w-fit">
-            Paradas
+        <div className="px-2 pt-4 md:pt-6 pb-2">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate(-1)}
+              className="flex items-center justify-center w-8 h-8 rounded-lg text-gray-500 hover:text-purple-700 hover:bg-purple-50 transition-colors -ml-1"
+              aria-label="Voltar"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            </button>
+            <div>
+              <h1 className="text-xl sm:text-2xl font-bold text-slate-900">
+                Paradas
           </h1>
-          <h3 className="text-sm text-gray-500 font-medium pl-2">
+          <h3 className="text-xs md:text-sm text-slate-500 mt-0.5">
             Encontre e explore as paradas de ônibus de Feira de Santana
           </h3>
+        </div>
+        </div>
         </div>
 
         <div className="flex gap-2 bg-gray-200 rounded-xl h-11 p-1 mb-4">
@@ -145,7 +168,7 @@ export const Paradas = () => {
               }`}
               onClick={() => setTab(i)}
             >
-              {i === 0 ? <Lupa className="h-4 w-4" /> : <PinoLocalizacao className="h-4 w-4" />}
+              {i === 0 ? <MagnifyingGlass className="h-4 w-4" /> : <MapPin className="h-4 w-4" />}
               {op}
             </button>
           ))}
@@ -153,45 +176,55 @@ export const Paradas = () => {
 
         {tab === 0 && (
           <>
-            <div className="flex flex-row items-center gap-2 mb-4">
-              <div className="relative w-full">
-                <span className="absolute pl-3 text-gray-400 h-full flex items-center z-30">
-                  <Lupa />
-                </span>
-                <input
-                  ref={inputRef}
-                  onChange={HandleChange}
-                  className={`border border-gray-200 rounded-lg w-full pl-10 pr-4 h-10 text-sm font-medium focus:outline focus:outline-offset-1 focus:outline-gray-300 shadow-sm ${inputRef.current?.value ? 'border-purple-700' : ''}`}
+            <div className="relative w-full mb-4">
+              <span className="absolute pl-3 text-gray-500 h-full flex items-center z-10">
+                <MagnifyingGlass />
+              </span>
+              <input
+                ref={inputRef}
+                onChange={HandleChange}
+                  className={`border border-gray-200 rounded-lg w-full pl-10 pr-10 h-11 text-sm font-medium focus:outline-none focus:shadow-md shadow-sm transition-all ${inputRef.current?.value ? 'border-purple-700 shadow-purple-50' : ''}`}
+                  style={{ fontSize: 16 }}
                   placeholder="Pesquisar código ou nome da parada"
-                  type="search"
-                  maxLength={30}
-                />
-              </div>
+                type="search"
+                maxLength={30}
+              />
               {inputRef.current?.value && (
                 <button
                   onClick={HandleDeleteSearch}
-                  className="h-10 px-4 rounded-lg border-2 border-red-500 text-red-500 text-sm font-medium whitespace-nowrap"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center w-6 h-6 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-500 transition-colors z-10"
+                  aria-label="Limpar pesquisa"
                 >
-                  limpar
+                  <X className="h-3 w-3" />
                 </button>
               )}
             </div>
             {loading ? (
-              <BarLoading />
+              <SkeletonList count={5} />
             ) : (
               <div className="flex flex-col gap-2 pb-8">
-                {paradas && Object.keys(paradas).length > 0
-                  ? Object.values(paradas)
-                      .filter(
-                        (p) =>
-                          p.desc?.toUpperCase().includes(search?.toUpperCase()) ||
-                          p.end?.toUpperCase().includes(search?.toUpperCase())
-                      )
-                      .slice(0, 30)
-                      .map((p) => (
-                        <StopCard key={p.cod} stop={p} handleClick={handleOpen} />
-                      ))
-                  : search && <p className="text-sm text-gray-400 text-center py-8">Nenhuma parada encontrada</p>}
+                {!loading && !search && (
+                  <EmptyState
+                    icon={<MagnifyingGlass className="h-6 w-6" />}
+                    title="Pesquise por uma parada"
+                    description="Digite o código ou nome da parada para encontrá-la."
+                  />
+                )}
+                {!loading && search && filteredStops.length > 0 && (
+                  <p className="text-sm text-gray-500 px-1">
+                    {filteredStops.length} parada(s) encontrada(s)
+                  </p>
+                )}
+                {!loading && search && filteredStops.length === 0 && (
+                  <EmptyState
+                    icon={<MapPin className="h-6 w-6" />}
+                    title="Nenhuma parada encontrada"
+                    description={`Nenhum resultado para "${search}". Tente outro código ou nome.`}
+                  />
+                )}
+                {filteredStops.map((p) => (
+                  <StopCard key={p.cod} stop={p} handleClick={handleOpen} />
+                ))}
               </div>
             )}
           </>
@@ -221,14 +254,16 @@ function ParadasProximas() {
       <div className="rounded-xl overflow-hidden border border-gray-200 mb-4 h-64 md:h-80 relative">
         {locLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-white z-10 rounded-xl">
-            <BarLoading />
+            <SkeletonList count={5} />
           </div>
         )}
         {locError && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-white z-10 rounded-xl gap-2 text-gray-400">
-            <PinoLocalizacao className="h-8 w-8" />
-            <p className="text-sm font-medium">Não foi possível obter sua localização</p>
-            <p className="text-xs text-gray-500">Verifique as permissões de localização do navegador</p>
+          <div className="absolute inset-0 z-10 rounded-xl">
+            <EmptyState
+              icon={<MapPin className="h-6 w-6" />}
+              title="Não foi possível obter sua localização"
+              description="Verifique as permissões de localização do navegador."
+            />
           </div>
         )}
         <MapContainer className="h-full max-h-64 md:max-h-80 w-full" center={center} zoom={16} scrollWheelZoom={true}>
@@ -257,13 +292,13 @@ function ParadasProximas() {
         </MapContainer>
       </div>
 
-      {!locLoading && !locError && loadingParadas && <BarLoading />}
-      {!locLoading && !locError && errorParadas && <Error error={errorParadas} imagesrc={'./explorar.png'} />}
+      {!locLoading && !locError && loadingParadas && <SkeletonList count={3} />}
+      {!locLoading && !locError && errorParadas && <Error error={errorParadas} imagesrc="./explorar.png" />}
       {!locLoading && !locError && !loadingParadas && !errorParadas && stops.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-8 gap-2 text-gray-400">
-          <PinoLocalizacao className="h-8 w-8" />
-          <p className="text-sm font-medium">Nenhuma parada encontrada nas proximidades</p>
-        </div>
+        <EmptyState
+          icon={<MapPin className="h-6 w-6" />}
+          title="Nenhuma parada encontrada nas proximidades"
+        />
       )}
       {!locLoading && !locError && !loadingParadas && !errorParadas && stops.length > 0 && (
         <div className="flex flex-col gap-2 pb-8">
@@ -273,10 +308,10 @@ function ParadasProximas() {
           {stops.map((p) => (
             <div
               key={p.cod}
-              className={`border min-h-12 md:min-h-14 w-full rounded-lg px-3 md:px-4 border-l-4 cursor-pointer transition-all ${
+              className={`border min-h-12 md:min-h-14 w-full rounded-lg px-3 md:px-4 py-2 shadow-sm cursor-pointer transition-colors ${
                 selectedStop?.cod === p.cod
-                  ? 'border-l-purple-800 border-t-purple-800 bg-purple-50'
-                  : 'border-gray-300 border-l-purple-800'
+                  ? 'border-purple-300 bg-purple-50 shadow-md'
+                  : 'border-gray-200 hover:border-purple-200 hover:bg-purple-50/30'
               }`}
               onClick={() => {
                 setSelectedStop(p)
@@ -286,17 +321,17 @@ function ParadasProximas() {
               }}
             >
               <div className="flex flex-row gap-2 h-full items-center py-1">
-                <div className="px-2 border text-purple-800 border-purple-800 rounded-md text-sm font-bold flex items-center gap-1.5">
-                  <PinoLocalizacao className="h-3.5" />
+                <div className="px-2 border text-purple-700 border-purple-200 rounded-md text-sm font-bold flex items-center gap-1.5 shrink-0">
+                  <MapPin className="h-3.5" />
                   {p.cod}
                 </div>
                 <div className="font-medium text-sm truncate flex-1">{p.desc}</div>
                 <Link
                   to={`/paradas/${p.cod}`}
-                  className="flex items-center justify-center h-7 min-w-14 bg-purple-800 px-2 rounded-md text-white font-semibold text-xs"
+                  className="shrink-0 ml-2"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  Detalhes <Seta className="h-3" />
+                  <CaretRight className="h-5 w-5 text-gray-400 hover:text-purple-600 transition-colors" />
                 </Link>
               </div>
             </div>
@@ -311,38 +346,43 @@ const StopCard = ({ stop, handleClick }) => {
   const isFav = useLinhasStore((s) => s.isFavParada(stop.cod))
   const toggleFav = useLinhasStore((s) => s.toggleFavParada)
   const notify = useToastStore((s) => s.notify)
+  const reduced = useReducedMotion()
 
   return (
-    <div className="border border-gray-300 min-h-12 md:min-h-14 w-full rounded-lg px-3 md:px-4 border-l-purple-800 border-l-4">
+    <motion.div
+      initial={reduced ? {} : { opacity: 0, y: 12 }}
+      whileInView={reduced ? {} : { opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-40px' }}
+      transition={{ duration: 0.3, ease: 'easeOut' }}
+    >
+    <div onClick={() => handleClick(stop)} className="border border-gray-200 min-h-12 md:min-h-14 w-full rounded-lg px-3 md:px-4 py-2 shadow-sm hover:shadow-md transition-shadow cursor-pointer active:bg-purple-50/30">
       <div className="flex flex-row gap-1 md:gap-2 h-full items-center">
         <button
           onClick={(e) => {
             e.stopPropagation()
             const adding = !isFav
             toggleFav(stop)
+            trackEvent('favoritar', { action: adding ? 'add' : 'remove', type: 'parada', id: stop.cod })
             notify(
               adding
                 ? `Parada ${stop.cod} adicionada aos favoritos`
                 : `Parada ${stop.cod} removida dos favoritos`,
-              'success'
+              adding ? 'success' : 'info',
+              adding
             )
           }}
-          className={`hidden sm:flex items-center justify-center h-8 w-8 ${isFav ? 'text-yellow-500' : 'text-gray-300 hover:text-yellow-400'}`}
+          className={`flex items-center justify-center h-8 w-8 shrink-0 ${isFav ? 'text-yellow-500' : 'text-gray-300 hover:text-yellow-400'}`}
         >
-          <Estrela className={`h-5 w-5 ${isFav ? 'fill-yellow-500' : ''}`} />
+          <Star weight={isFav ? 'fill' : 'regular'} className={`h-5 w-5 ${isFav ? 'text-yellow-500' : ''}`} />
         </button>
-        <div className="px-2 border text-purple-800 border-purple-800 rounded-md text-sm font-bold flex items-center gap-1.5">
-          <PinoLocalizacao className="h-3.5" />
+        <div className="px-2 border text-purple-700 border-purple-200 rounded-md text-sm font-bold flex items-center gap-1.5 shrink-0">
+          <MapPin className="h-3.5" />
           {stop.cod}
         </div>
         <div className="font-medium text-sm md:text-base truncate flex-1">{stop.desc}</div>
-        <button
-          className="h-7 min-w-14 bg-purple-800 px-2 rounded-md text-white font-semibold text-xs flex items-center"
-          onClick={() => handleClick(stop)}
-        >
-          Detalhes <Seta className="h-3" />
-        </button>
+        <CaretRight className="h-5 w-5 text-gray-400 shrink-0" />
       </div>
     </div>
+    </motion.div>
   )
 }

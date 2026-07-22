@@ -1,6 +1,6 @@
 import { useFetch } from '../hooks/useFetch'
 import { useGeolocation } from '../hooks/useGeolocation'
-import { Editar, PinoLocalizacao } from './icons'
+import { MapPin } from '@phosphor-icons/react'
 
 export default function CardParadasProximas() {
   /*
@@ -55,7 +55,7 @@ export default function CardParadasProximas() {
               <div key={stop.cod} className="p-4 hover:bg-gray-50">
                 <div className="mb-1 flex items-center gap-2">
                   <span>
-                    <PinoLocalizacao />
+                    <MapPin />
                   </span>
                   <div className="flex flex-col w-4/5">
                     <h4 className="font-medium">{stop.desc}</h4>
@@ -77,7 +77,7 @@ export default function CardParadasProximas() {
               href="/explorar"
             >
               <span>
-                <PinoLocalizacao className="h-4  text-blue-600" />
+                <MapPin className="h-4  text-blue-600" />
               </span>
               <p
                 className="tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-sky-500 to-indigo-500"

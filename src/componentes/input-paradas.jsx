@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLinhasStore } from '../stores/linhaStore'
 import { useStops } from '../hooks/useStops'
-import { Estrela, Onibus, PinoLocalizacao, Seta } from './icons'
+import { Star, Bus, MapPin, CaretRight } from '@phosphor-icons/react'
 
 export default function InputParadas({ value, setValue }) {
   const [searchResults, setSearchResults] = useState([])
@@ -49,7 +49,7 @@ export default function InputParadas({ value, setValue }) {
   return (
     <div className="relative w-full">
       <span className="absolute pl-3 text-gray-400 h-full flex items-center z-30">
-        <PinoLocalizacao className="h-4" />
+        <MapPin className="h-4" />
       </span>
       <input
         ref={inputRef}
@@ -57,6 +57,7 @@ export default function InputParadas({ value, setValue }) {
         onFocus={handleFocus}
         onBlur={handleBlur}
         className="border border-gray-200 rounded-lg w-full pl-10 pr-4 h-10 text-sm font-medium focus:outline focus:outline-offset-1 focus:outline-gray-300 shadow-sm"
+        style={{ fontSize: 16 }}
         placeholder="Nome ou código da parada"
         type="search"
         name="search"
@@ -66,7 +67,7 @@ export default function InputParadas({ value, setValue }) {
         <div className="absolute top-11 z-50 bg-white border border-gray-200 shadow-lg rounded-lg w-full max-h-72 overflow-y-auto">
           {!inputRef.current?.value && (
             <div className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-gray-400 border-b border-gray-100">
-              <Estrela className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+              <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
               Paradas favoritas
             </div>
           )}
@@ -77,7 +78,7 @@ export default function InputParadas({ value, setValue }) {
               className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-purple-50 transition-colors text-left border-b border-gray-50 last:border-0"
             >
               <div className="flex items-center gap-1 px-2 py-0.5 border border-purple-800 rounded-md text-purple-800 font-bold text-xs shrink-0">
-                <PinoLocalizacao className="h-3" />
+                <MapPin className="h-3" />
                 {e.cod}
               </div>
               <span className="truncate text-gray-700 font-medium">
@@ -117,7 +118,7 @@ const LabelParada = (parada) => {
         alert(parada.desc)
       }}
     >
-      <PinoLocalizacao className="h-4" />
+      <MapPin className="h-4" />
       {parada.cod}
     </div>
   )
@@ -127,7 +128,7 @@ const LabelLinha = (cod) => {
   return (
     <span className="flex flex-col justify-center items-center ">
       <span className="flex items-center rounded-md border border-purple-600 bg-purple-600 text-white font-semibold text-sm w-16">
-        <Onibus className="h-4" />
+        <Bus className="h-4" />
         {cod}
       </span>
       <span className="text-sm font-medium px-2 flex flex-col gap-0 justify-center">

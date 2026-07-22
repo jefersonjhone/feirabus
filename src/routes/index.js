@@ -15,18 +15,14 @@ import ParadasProximas from '../pages/paradas-proximas.jsx'
 import { LineDetail } from '../pages/linhas/linha.id'
 import { Paradas } from '../pages/paradas'
 import { StopDetail } from '../pages/paradas/parada.id'
+import Toast from '../componentes/toast'
+import FeedbackModal from '../componentes/feedback-modal'
 
 export default function AppRoutes() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-        {/*
-            <Route path="/pesquisar-linha" element={<PesquisarPorLinha/>}/>
-            <Route path="/favoritos" element={<Favoritos/>}/>
-            <Route path="/calcular-rota" element={<CalcularRota/>}/>
-            <Route path="/acompanhar/:linha" element={<Acompanhar/>}/>*/}
-
         <Route path="/explorar" element={<Mapa />} />
         <Route path="/map" element={<Map />} />
         <Route path="/linhas" element={<Linhas />} />
@@ -34,10 +30,13 @@ export default function AppRoutes() {
         <Route path="/paradas" element={<Paradas />} />
         <Route path="/paradas/:cod" element={<StopDetail />} />
         <Route path="/rotas" element={<Rotas />} />
+        <Route path="/rotas/:origem/:destino" element={<Rotas />} />
         <Route path="/veiculos" element={<Veiculos />} />
         <Route path="/favoritos" element={<Favoritos />} />
         <Route path="/paradas-proximas" element={<ParadasProximas />} />
       </Routes>
+      <Toast />
+      <FeedbackModal />
     </Router>
   )
 }
